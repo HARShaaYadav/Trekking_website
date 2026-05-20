@@ -6,4 +6,5 @@ export const REGION_VIDEOS: Partial<Record<Region, string>> = {};
 
 export function trekVideo(trek: Trek): string | undefined {
     return trek.video ?? REGION_VIDEOS[trek.region];
+    
 }
