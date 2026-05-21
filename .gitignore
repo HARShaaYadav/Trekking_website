@@ -13,6 +13,8 @@
 # testing
 /coverage
 
+
+
 # next.js
 /.next/
 /out/
@@ -57,3 +59,4 @@ coverage/
 .vercel/
 out/
 .vscode
+
