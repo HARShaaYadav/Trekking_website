@@ -49,6 +49,7 @@ export const GUIDES: TrekGuide[] = [
         image: "/Sangester.png",
         bio: "Leads the Sangestar Tso, Monpa Culture and Gorichen Base Camp routes. Raised in Tawang, he has spent over a decade guiding trekkers through high-altitude monasteries and Monpa villages.",
     },
+   
     {
         name: "Anu Mishmi",
         role: "Trek Leader, Lohit & Anjaw Regions",
