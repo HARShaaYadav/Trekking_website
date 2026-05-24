@@ -83,7 +83,6 @@ export const moreTreks: Trek[] = [
         ],
     },
 ];
-
 export function getMoreTrek(slug: string): typeof moreTreks[0] | undefined {
     return moreTreks.find((trek) => trek.slug === slug);
 }
