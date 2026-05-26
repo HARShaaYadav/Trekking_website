@@ -16,4 +16,5 @@ export const trekGalleries: Record<string, string[]> = {
     "subansiri-alpine-pass": ["/Gorichen.png", "/Gorichen2.png", "/Gorichen3.png", "/Gorichen4.png", "/Gorichen5.png"],
     "kameng-river-gorge-trek": ["/BaileyTrek.png", "/BaileyTrek2.png", "/BaileyTrek3.png", "/BaileyTrek4.png", "/BaileyTrek5.png"],
     "changlang-tiger-reserve": ["/anini.png", "/anini1.png", "/anini2.png", "/anini3.png"],
+    
 };
