@@ -67,7 +67,6 @@ export const blogPosts: BlogPost[] = [
             "The most important chapter in any trekker's preparation — how acclimatization works, the warning signs, and when to turn around.",
         date: "March 4, 2026",
         read: "10 min read",
-        href: "/blog",
-        
+        href: "/blog",    
     },
 ];
