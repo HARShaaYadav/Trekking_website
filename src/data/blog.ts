@@ -68,5 +68,6 @@ export const blogPosts: BlogPost[] = [
         date: "March 4, 2026",
         read: "10 min read",
         href: "/blog",
+        
     },
 ];
