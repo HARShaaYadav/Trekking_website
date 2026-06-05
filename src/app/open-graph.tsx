@@ -71,6 +71,7 @@ export default function OpenGraphImage() {
                             color: "#D9662C",
                             marginBottom: 16,
                             fontWeight: 600,
+                            
                         }}
                     >
                         {SITE_TAGLINE}
