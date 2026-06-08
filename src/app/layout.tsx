@@ -115,6 +115,7 @@ export default function RootLayout({
                         <ChatBot />
                         <WhatsAppButton style="floating" />
                         <PwaInstallBanner />
+                        
                     </SiteChrome>
                     <RevealProvider />
                 </AuthProvider>
