@@ -16,8 +16,7 @@ export default function Icon() {
                     background: "#0d1721",
                     borderRadius: "6px",
                 }}
-        
-        >
+             >
                 <svg
                     width="24"
                     height="24"
