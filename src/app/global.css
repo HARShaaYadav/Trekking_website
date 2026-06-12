@@ -2305,7 +2305,6 @@ section {
     transform: translateY(-4px);
     box-shadow: var(--shadow-md);
 }
-
 .milestone .num {
     font-family: var(--font-mono);
     font-size: 40px;
