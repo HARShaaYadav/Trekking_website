@@ -1,7 +1,6 @@
 import type { Trek } from "@/lib/types";
 import { treks as baseTreks } from "@/data/treks";
 import { blogPosts as baseBlogPosts, type BlogPost } from "@/data/blog";
-
 /* ============================================================
    ADMIN STORE — a small localStorage-backed persistence layer
    used by the /admin panel.
