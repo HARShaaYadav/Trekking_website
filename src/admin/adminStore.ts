@@ -12,7 +12,6 @@ import { blogPosts as baseBlogPosts, type BlogPost } from "@/data/blog";
    seed data shipped in /src/data. Swap this module for real API
    calls when a backend is introduced.
    ============================================================ */
-
 const KEYS = {
     session: "tn-admin:session",
     treks: "tn-admin:treks",
