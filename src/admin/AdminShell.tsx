@@ -127,7 +127,8 @@ export default function AdminShell({
                            Trekking <b>Arunachal</b>
                         </span>
                         <span className="admin-brand-sub">
-                            Admin Panel</span>
+                            Admin Panel
+                            </span>
                     </span>
                 </Link>
 
