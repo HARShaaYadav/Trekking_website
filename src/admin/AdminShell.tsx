@@ -124,8 +124,7 @@ export default function AdminShell({
                     </span>
                     <span>
                         <span className="admin-brand-text">
-                          
-                            Trekking <b>Arunachal</b>
+                           Trekking <b>Arunachal</b>
                         </span>
                         <span className="admin-brand-sub">Admin Panel</span>
                     </span>
