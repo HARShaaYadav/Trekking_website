@@ -918,7 +918,6 @@
     .admin-block .admin-field-grid {
         grid-template-columns: 1fr;
     }
-
     .admin-stats {
         grid-template-columns: 1fr 1fr;
     }
