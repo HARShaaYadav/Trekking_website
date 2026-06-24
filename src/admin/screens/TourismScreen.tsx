@@ -8,8 +8,7 @@ import {
     deleteTrek,
     loadCustomTreks,
     loadTreks,
-} 
-from "@/admin/admin-store";
+} from "@/admin/admin-store";
 import type { Trek } from "@/lib/types";
 
 export default function TreksScreen() {
