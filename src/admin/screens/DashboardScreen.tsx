@@ -102,8 +102,7 @@ export default function DashboardScreen() {
                     </span>
                 </div>
                 <div className="admin-stat">
-                    
-                    <span className="admin-stat-label">Blog posts</span>
+                   <span className="admin-stat-label">Blog posts</span>
                     <span className="admin-stat-value">{data.blog}</span>
                     <span className="admin-stat-note">
                         latest guides & stories ·{" "}
