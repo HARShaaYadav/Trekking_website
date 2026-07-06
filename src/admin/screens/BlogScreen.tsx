@@ -171,8 +171,7 @@ export default function BlogScreen() {
                                         update("slug", slugify(e.target.value))
                                     }
                                     placeholder="best-time-to-trek-Arunachal"
-                                />
-                                
+                                /> 
                                 <span className="admin-help">
                                     Leave blank to build from the title.
                                 </span>
