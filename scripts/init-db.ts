@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 /* ---- Load .env.local into process.env (tiny parser, no dotenv dep) ---- */
 function loadEnvFile(): void {
     try {
+        
         const raw = readFileSync(resolve(".env.local"), "utf8");
         for (const line of raw.split(/\r?\n/)) {
             const trimmed = line.trim();
