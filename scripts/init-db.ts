@@ -2,7 +2,6 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import Database from "better-sqlite3";
 import bcrypt from "bcryptjs";
-
 /* ---- Load .env.local into process.env (tiny parser, no dotenv dep) ---- */
 function loadEnvFile(): void {
     try {
