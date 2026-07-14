@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
     reactStrictMode: true,
+    devIndicators: false,
     images: {
         // Register the quality values used by <Image> components (e.g.
         // quality={95} in TrekHero). Required config starting in Next.js 16.
