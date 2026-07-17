@@ -56,3 +56,4 @@ coverage/
 *.tsbuildinfo
 .vercel/
 out/
+.vscode
