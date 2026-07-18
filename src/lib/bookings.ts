@@ -39,7 +39,7 @@ export async function findBookingsForUser(
     const res = await query<BookingRow>(
         `SELECT ${BOOKING_COLUMNS}
          FROM bookings
-         WHERE lower(user_email) = lower($1)
+         WHERE lower(user_email) = lower(?)
          ORDER BY created_at DESC;`,
         [email]
     );
@@ -87,14 +87,15 @@ export async function createBooking(
     input: CreateBookingInput,
     userEmail: string
 ): Promise<BookingRow> {
-    const res = await query<BookingRow>(
+    // For SQLite compatibility, we insert and then fetch the row
+    // SQLite doesn't support RETURNING with custom ID generation like PostgreSQL does
+    await query(
         `INSERT INTO bookings (
              reference, user_email, trek_slug, trek_name, days, departure,
              departure_type, group_size, name, email, phone, country, notes,
              total, status
          )
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, 'new')
-         RETURNING ${BOOKING_COLUMNS};`,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new');`,
         [
             input.reference,
             userEmail,
@@ -112,6 +113,20 @@ export async function createBooking(
             input.total,
         ]
     );
+
+    // Now fetch the booking we just created by reference
+    const res = await query<BookingRow>(
+        `SELECT ${BOOKING_COLUMNS}
+         FROM bookings
+         WHERE reference = ? AND lower(user_email) = lower(?)
+         LIMIT 1;`,
+        [input.reference, userEmail]
+    );
+    
+    if (!res.rows[0]) {
+        throw new Error('Failed to create booking - could not retrieve inserted row');
+    }
+    
     return res.rows[0];
 }
 
