@@ -6,23 +6,23 @@ import type { Trek, TrekFaq } from "@/lib/types";
 /* Site-wide constants                                                 */
 /* ------------------------------------------------------------------ */
 
-export const SITE_NAME = "Trekking Nepal";
-export const SITE_TAGLINE = "Himalayan Trekking Company";
+export const SITE_NAME = "Trekking Arunachal Pradesh";
+export const SITE_TAGLINE = "Eastern Himalayan Trekking Company";
 export const SITE_DESCRIPTION =
-    "A Kathmandu-based trekking company running fixed-departure and custom treks exclusively inside Nepal since 2013. Everest, Annapurna, Manaslu, Langtang, Mustang and Kanchenjunga.";
+    "An Itanagar-based trekking company running fixed-departure and custom treks exclusively in Arunachal Pradesh since 2013. Tawang, West Kameng, Anjaw, Lower Subansiri, and Dibang Valley.";
 
 export const SITE_KEYWORDS = [
-    "Nepal trekking",
-    "Everest Base Camp",
-    "Annapurna",
-    "Manaslu",
-    "Langtang",
-    "Mustang",
-    "Kanchenjunga",
-    "Himalaya",
+    "Arunachal Pradesh trekking",
+    "Tawang treks",
+    "Ziro Valley",
+    "Anini treks",
+    "West Kameng",
+    "Anjaw district",
+    "Lower Subansiri",
+    "Dibang Valley",
+    "Eastern Himalayas",
     "trekking company Arunachal Pradesh",
     "guided treks Arunachal Pradesh",
-    "Kathmandu trekking",
 ];
 
 export const TWITTER_HANDLE = "@trekking_arunachal";
@@ -135,16 +135,16 @@ export function organizationJsonLd(): JsonLdObject {
         description: SITE_DESCRIPTION,
         address: {
             "@type": "PostalAddress",
-            streetAddress: "Thamel",
-            addressLocality: "Kathmandu",
-            postalCode: "44600",
-            addressCountry: "NP",
+            streetAddress: "Bank Tinali",
+            addressLocality: "Itanagar",
+            postalCode: "791111",
+            addressCountry: "IN",
         },
         contactPoint: {
             "@type": "ContactPoint",
             contactType: "customer service",
-            email: "hello@trekkingnepal.example",
-            availableLanguage: ["English"],
+            email: "hello@trekkingarunachal.com",
+            availableLanguage: ["English", "Hindi"],
         },
         sameAs: [],
     };
@@ -249,7 +249,7 @@ export function contactPageJsonLd(): JsonLdObject {
         "@context": "https://schema.org",
         "@type": "ContactPage",
         "@id": `${SITE_URL}/contact#page`,
-        name: "Contact Trekking Nepal",
+        name: "Contact Trekking Arunachal Pradesh",
         url: absoluteUrl("/contact"),
         about: { "@id": `${SITE_URL}/#organization` },
         inLanguage: "en",
@@ -262,7 +262,7 @@ export function aboutPageJsonLd(): JsonLdObject {
         "@context": "https://schema.org",
         "@type": "AboutPage",
         "@id": `${SITE_URL}/about#page`,
-        name: "About Trekking Nepal",
+        name: "About Trekking Arunachal Pradesh",
         url: absoluteUrl("/about"),
         description: SITE_DESCRIPTION,
         mainEntity: { "@id": `${SITE_URL}/#organization` },
@@ -277,14 +277,14 @@ export function serviceJsonLd(): JsonLdObject {
         "@type": "Service",
         "@id": `${SITE_URL}/book#service`,
         serviceType: "Guided trekking tours",
-        name: "Guided Trekking in Nepal",
+        name: "Guided Trekking in Arunachal Pradesh",
         url: absoluteUrl("/book"),
         description:
-            "Book a place on a guided Nepal trek — Everest, Annapurna, Manaslu, Langtang, Mustang and Kanchenjunga. Availability and pricing confirmed within 24 hours.",
+            "Book a place on a guided Arunachal Pradesh trek — Tawang, West Kameng, Anjaw, Lower Subansiri, and Dibang Valley. Availability and pricing confirmed within 24 hours.",
         provider: { "@id": `${SITE_URL}/#organization` },
         areaServed: {
             "@type": "Country",
-            name: "Nepal",
+            name: "India",
         },
         audience: {
             "@type": "Audience",
@@ -315,9 +315,9 @@ export function blogJsonLd(posts: BlogPost[]): JsonLdObject {
         "@type": "Blog",
         "@id": `${SITE_URL}/blog#blog`,
         url: absoluteUrl("/blog"),
-        name: "The Trekking Nepal Journal",
+        name: "The Trekking Arunachal Pradesh Journal",
         description:
-            "Guides' notes from the trail — season updates, packing lists and honest answers to the questions trekkers ask us most.",
+            "Guides' notes from the trail — season updates, packing lists and honest answers to the questions trekkers ask us most about Arunachal Pradesh.",
         publisher: { "@id": `${SITE_URL}/#organization` },
         inLanguage: "en",
         blogPost: posts.map((post) => {
