@@ -1,61 +1,70 @@
-import { Pool } from "pg";
-import type { QueryResult, QueryResultRow } from "pg";
+import Database from "better-sqlite3";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 
-/**
- * PostgreSQL connection pool for the Trekking Arunachal Pradesh app.
- *
- * Connection is resolved from (in priority order):
- *   1. `DATABASE_URL`       — e.g. postgres://postgres:secret@localhost:5432/trekking_nepal
- *   2. Standard PG env vars — PGHOST / PGPORT / PGUSER / PGPASSWORD / PGDATABASE
- *
- * The pool is cached on `globalThis` so Next.js dev-mode hot reloads reuse
- * the same connections instead of exhausting the Postgres connection limit.
- */
-function resolveConnectionString(): string {
-    if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
-
-    const host = process.env.PGHOST ?? "localhost";
-    const port = process.env.PGPORT ?? "5432";
-    const user = process.env.PGUSER ?? "postgres";
-    const password = process.env.PGPASSWORD ?? "";
-    const database = process.env.PGDATABASE ?? "trekking_nepal";
-
-    const creds = password
-        ? `${user}:${encodeURIComponent(password)}`
-        : user;
-    return `postgres://${creds}@${host}:${port}/${database}`;
-}
-
-const globalForPg = globalThis as unknown as { _tnPool?: Pool };
-
-export const pool: Pool =
-    globalForPg._tnPool ??
-    new Pool({
-        connectionString: resolveConnectionString(),
-        max: 10,
-        idleTimeoutMillis: 30_000,
-    });
-
-if (process.env.NODE_ENV !== "production") {
-    globalForPg._tnPool = pool;
-}
-
-/** Typed query helper so callers don't have to juggle Pool directly. */
-export async function query<T extends QueryResultRow = QueryResultRow>(
-    text: string,
-    params?: unknown[]
-): Promise<QueryResult<T>> {
-    return pool.query<T>(text, params);
-}
-
-/** True once the DB is reachable and the expected tables exist. */
-export async function checkDatabase(): Promise<boolean> {
+// Load .env.local
+function loadEnvFile(): void {
     try {
-        const res = await query<{ table_name: string }>(
-            "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name IN ('users', 'bookings');"
-        );
-        return (res.rowCount ?? 0) > 0;
+        const raw = readFileSync(resolve(".env.local"), "utf8");
+        for (const line of raw.split(/\r?\n/)) {
+            const trimmed = line.trim();
+            if (!trimmed || trimmed.startsWith("#")) continue;
+            const eq = trimmed.indexOf("=");
+            if (eq === -1) continue;
+            const key = trimmed.slice(0, eq).trim();
+            let value = trimmed.slice(eq + 1).trim();
+            if (
+                (value.startsWith('"') && value.endsWith('"')) ||
+                (value.startsWith("'") && value.endsWith("'"))
+            ) {
+                value = value.slice(1, -1);
+            }
+            if (!(key in process.env)) process.env[key] = value;
+        }
     } catch {
-        return false;
+        /* no .env.local */
+    }
+}
+
+loadEnvFile();
+
+function getDatabasePath(): string {
+    const dbUrl = process.env.DATABASE_URL || "file:./dev.db";
+    return dbUrl.replace("file:", "");
+}
+
+let db: Database.Database | null = null;
+
+export function getDb(): Database.Database {
+    if (!db) {
+        const dbPath = getDatabasePath();
+        db = new Database(dbPath);
+        
+        // Enable foreign keys
+        db.pragma('foreign_keys = ON');
+    }
+    return db;
+}
+
+// Helper function to simulate PostgreSQL's query interface
+export async function query<T = any>(sql: string, params: any[] = []): Promise<{ rows: T[]; rowCount: number }> {
+    const db = getDb();
+    
+    try {
+        // Convert PostgreSQL placeholders ($1, $2, ...) to SQLite placeholders (?)
+        let convertedSql = sql.replace(/\$\d+/g, '?');
+        
+        if (convertedSql.trim().toUpperCase().startsWith('SELECT')) {
+            const stmt = db.prepare(convertedSql);
+            const rows = stmt.all(...params) as T[];
+            return { rows, rowCount: rows.length };
+        } else {
+            const stmt = db.prepare(convertedSql);
+            const result = stmt.run(...params);
+            return { rows: [], rowCount: result.changes };
+        }
+    } catch (error) {
+        console.error('Database query error:', error, 'SQL:', sql);
+        throw error;
     }
 }
