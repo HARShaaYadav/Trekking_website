@@ -51,7 +51,7 @@ export const blogPosts: BlogPost[] = [
     },
     {
         slug: "packing-list-2026",
-        title: "The 2026 Nepal Trekking Packing List",
+        title: "The 2026 Arunachal Pradesh Trekking Packing List",
         category: "Gear",
         excerpt:
             "Everything we tell our guests to bring — and the handful of things that should stay home. Built from fifteen seasons of what actually gets used.",
