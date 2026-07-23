@@ -56,7 +56,7 @@ export default function TrekHero({ trek, video }: TrekHeroProps) {
                 >
                     <Image
                         src={trek.image}
-                        alt={`${trek.name} in the Nepal Himalaya`}
+                        alt={`${trek.name} in the Eastern Himalayas of Arunachal Pradesh`}
                         fill
                         priority
                         quality={95}
@@ -155,7 +155,7 @@ export default function TrekHero({ trek, video }: TrekHeroProps) {
                     >
                         <Image
                             src={trek.image}
-                            alt={`${trek.name} in the Nepal Himalaya`}
+                            alt={`${trek.name} in the Eastern Himalayas of Arunachal Pradesh`}
                             fill
                             quality={95}
                             sizes="100vw"

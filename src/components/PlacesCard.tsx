@@ -12,7 +12,7 @@ interface TrekCardProps {
     variant?: "home" | "treks";
 }
 
-/** "Kathmandu → Lukla (flight)" → "Kathmandu" */
+/** "Itanagar → Ziro (by road)" → "Itanagar" */
 function startCity(startPoint: string): string {
     return startPoint.split("→")[0].trim();
 }
