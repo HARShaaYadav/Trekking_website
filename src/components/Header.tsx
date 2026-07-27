@@ -6,11 +6,15 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import SearchBar from "./SearchBar";
+import WeatherHeaderBadge from "./WeatherHeaderBadge";
 import { treks } from "@/data/treks";
 
 const NAV_LINKS = [
     { href: "/", label: "Home" },
     { href: "/treks", label: "Treks" },
+    { href: "/map", label: "Trail Map" },
+    { href: "/weather", label: "Weather" },
+    { href: "/community", label: "Community" },
     { href: "/chatbot", label: "AI Assistant" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },
@@ -62,6 +66,7 @@ export default function Header() {
                     <span className="sub">Arunachal Pradesh</span>
                 </Link>
                 <SearchBar />
+                <WeatherHeaderBadge />
                 <div className={`nav-links ${open ? "open" : ""}`} id="navLinks">
                     <div className="nav-drop" ref={dropRef}>
                         <button
