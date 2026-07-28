@@ -82,7 +82,7 @@ export default function ContactForm() {
                 <h3>Enquiry received</h3>
                 <p>
                     Thanks{name ? `, ${name.split(" ")[0]}` : ""} — your enquiry is with
-                    our Kathmandu team. We reply to every message within one business day.
+                    our Itanagar team. We reply to every message within one business day.
                 </p>
                 {ref && <p className="contact-ref">Reference: {ref}</p>}
                 <div className="btn-row">
