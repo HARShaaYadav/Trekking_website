@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
-import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import { treks } from "@/data/treks";
 import type { Region } from "@/lib/types";
 
@@ -169,6 +168,7 @@ export default function ChatBotPage() {
     const [messages, setMessages] = useState<ChatMessage[]>([GREETING]);
     const [input, setInput] = useState("");
     const [typing, setTyping] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
     const [voiceConfig, setVoiceConfig] = useState<VoiceConfig>({
         isListening: false,
         isRecording: false,
@@ -185,9 +185,18 @@ export default function ChatBotPage() {
     const scrollRef = useRef<HTMLDivElement>(null);
     const currentUtterance = useRef<SpeechSynthesisUtterance | null>(null);
 
-    // Initialize speech services
+    // Initialize client-side features
     useEffect(() => {
         if (typeof window !== "undefined") {
+            // Check if mobile
+            setIsMobile(window.innerWidth < 480);
+            
+            // Handle window resize
+            const handleResize = () => {
+                setIsMobile(window.innerWidth < 480);
+            };
+            window.addEventListener("resize", handleResize);
+            
             // Initialize speech synthesis
             if ("speechSynthesis" in window) {
                 setSynthesis(window.speechSynthesis);
@@ -201,10 +210,6 @@ export default function ChatBotPage() {
                 
                 loadVoices();
                 window.speechSynthesis.addEventListener("voiceschanged", loadVoices);
-                
-                return () => {
-                    window.speechSynthesis.removeEventListener("voiceschanged", loadVoices);
-                };
             }
             
             // Initialize speech recognition
@@ -237,6 +242,13 @@ export default function ChatBotPage() {
                 
                 setRecognition(recognition);
             }
+            
+            return () => {
+                window.removeEventListener("resize", handleResize);
+                if ("speechSynthesis" in window) {
+                    window.speechSynthesis.removeEventListener("voiceschanged", () => {});
+                }
+            };
         }
     }, []);
 
@@ -342,53 +354,89 @@ export default function ChatBotPage() {
         }
     }
 
-    function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         send(input);
     }
 
     return (
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden max-w-4xl mx-auto">
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: '600px' }}>
             {/* Header */}
-            <div className="bg-gradient-to-r from-orange-500 to-red-600 text-white p-4">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                            <span className="text-lg">🤖</span>
-                        </div>
-                        <div>
-                            <h2 className="text-xl font-semibold">TrekBot</h2>
-                            <p className="text-orange-100 text-sm">AI Assistant for Arunachal Pradesh Treks</p>
-                        </div>
+            <div className="chatbot-header">
+                <div className="chatbot-avatar">
+                    <span className="chatbot-avatar-dot" />
+                </div>
+                <div>
+                    <strong>TrekBot</strong>
+                    <div className="chatbot-status">
+                        Online · AI Assistant for Arunachal Pradesh Treks
                     </div>
-                    <div className="flex items-center space-x-2">
-                        {voiceConfig.isSpeaking && (
-                            <button
-                                onClick={stopSpeaking}
-                                className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors"
-                                title="Stop speaking"
-                            >
-                                🔇
-                            </button>
-                        )}
-                        <div className="text-right text-sm text-orange-100">
-                            <div>🎙️ Voice enabled</div>
-                            <div>🗣️ Text-to-speech ready</div>
-                        </div>
+                </div>
+                <div style={{ 
+                    marginLeft: 'auto',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    fontSize: 'clamp(11px, 2vw, 12px)',
+                    color: 'var(--stone)',
+                    flexDirection: isMobile ? 'column' : 'row'
+                }}>
+                    {voiceConfig.isSpeaking && (
+                        <button
+                            onClick={stopSpeaking}
+                            style={{
+                                background: 'rgba(255,255,255,0.2)',
+                                border: 'none',
+                                borderRadius: '50%',
+                                width: '28px',
+                                height: '28px',
+                                cursor: 'pointer',
+                                fontSize: '14px'
+                            }}
+                            title="Stop speaking"
+                        >
+                            🔇
+                        </button>
+                    )}
+                    <div style={{ textAlign: 'right', lineHeight: 1.2 }}>
+                        <div>🎙️ Voice</div>
+                        <div>🗣️ Audio</div>
                     </div>
                 </div>
             </div>
 
             {/* Voice Settings Panel */}
             {voiceConfig.voicesLoaded && availableVoices.length > 0 && (
-                <div className="bg-gray-50 p-3 border-b">
-                    <details className="text-sm">
-                        <summary className="cursor-pointer font-medium text-gray-700 mb-2">
-                            Voice Settings
+                <div style={{ 
+                    background: 'var(--mist)', 
+                    padding: 'clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px)', 
+                    borderBottom: '1px solid var(--hline)',
+                    fontSize: 'clamp(11px, 2vw, 13px)',
+                    overflowX: 'auto'
+                }}>
+                    <details>
+                        <summary style={{ 
+                            cursor: 'pointer', 
+                            fontWeight: '600', 
+                            color: 'var(--ink)', 
+                            marginBottom: '10px',
+                            userSelect: 'none'
+                        }}>
+                            ⚙️ Voice Settings
                         </summary>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div style={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(150px, 1fr))', 
+                            gap: '10px' 
+                        }}>
                             <div>
-                                <label className="block text-xs font-medium text-gray-600 mb-1">
+                                <label style={{ 
+                                    display: 'block', 
+                                    fontSize: 'clamp(11px, 2vw, 12px)', 
+                                    fontWeight: '600', 
+                                    color: 'var(--sub)', 
+                                    marginBottom: '4px' 
+                                }}>
                                     Voice
                                 </label>
                                 <select
@@ -397,18 +445,31 @@ export default function ChatBotPage() {
                                         ...prev, 
                                         selectedVoiceIndex: parseInt(e.target.value) 
                                     }))}
-                                    className="w-full px-2 py-1 border rounded text-xs"
+                                    style={{
+                                        width: '100%',
+                                        padding: '6px 8px',
+                                        border: '1px solid var(--hline)',
+                                        borderRadius: 'var(--r-sm)',
+                                        fontSize: 'clamp(11px, 2vw, 12px)',
+                                        background: '#fff'
+                                    }}
                                 >
                                     {availableVoices.map((voice, index) => (
                                         <option key={index} value={index}>
-                                            {voice.name} ({voice.lang})
+                                            {voice.name.slice(0, 20)} ({voice.lang.slice(0, 2).toUpperCase()})
                                         </option>
                                     ))}
                                 </select>
                             </div>
                             <div>
-                                <label className="block text-xs font-medium text-gray-600 mb-1">
-                                    Speed: {voiceConfig.speechRate}
+                                <label style={{ 
+                                    display: 'block', 
+                                    fontSize: 'clamp(11px, 2vw, 12px)', 
+                                    fontWeight: '600', 
+                                    color: 'var(--sub)', 
+                                    marginBottom: '4px' 
+                                }}>
+                                    Speed: {voiceConfig.speechRate.toFixed(1)}x
                                 </label>
                                 <input
                                     type="range"
@@ -420,12 +481,18 @@ export default function ChatBotPage() {
                                         ...prev, 
                                         speechRate: parseFloat(e.target.value) 
                                     }))}
-                                    className="w-full"
+                                    style={{ width: '100%' }}
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs font-medium text-gray-600 mb-1">
-                                    Pitch: {voiceConfig.speechPitch}
+                                <label style={{ 
+                                    display: 'block', 
+                                    fontSize: 'clamp(11px, 2vw, 12px)', 
+                                    fontWeight: '600', 
+                                    color: 'var(--sub)', 
+                                    marginBottom: '4px' 
+                                }}>
+                                    Pitch: {voiceConfig.speechPitch.toFixed(1)}x
                                 </label>
                                 <input
                                     type="range"
@@ -437,7 +504,7 @@ export default function ChatBotPage() {
                                         ...prev, 
                                         speechPitch: parseFloat(e.target.value) 
                                     }))}
-                                    className="w-full"
+                                    style={{ width: '100%' }}
                                 />
                             </div>
                         </div>
@@ -448,105 +515,147 @@ export default function ChatBotPage() {
             {/* Chat Messages */}
             <div 
                 ref={scrollRef}
-                className="h-96 overflow-y-auto p-4 space-y-4"
-                style={{ height: '500px' }}
+                className="chatbot-body"
+                style={{ flex: 1, minHeight: '300px' }}
             >
                 {messages.map((m, i) => (
-                    <div key={i} className={`flex ${m.from === "user" ? "justify-end" : "justify-start"}`}>
-                        <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                            m.from === "user" 
-                                ? "bg-orange-500 text-white" 
-                                : "bg-gray-100 text-gray-800"
-                        }`}>
-                            <div className="whitespace-pre-wrap">{m.text}</div>
-                            <div className={`text-xs mt-1 ${
-                                m.from === "user" ? "text-orange-100" : "text-gray-500"
-                            }`}>
+                    <div key={i} className={`chat-msg ${m.from}`}>
+                        <div className="chat-bubble">
+                            {m.text}
+                            <div style={{ 
+                                fontSize: '11px', 
+                                opacity: 0.6, 
+                                marginTop: '6px',
+                                color: m.from === "user" ? 'var(--stone)' : 'var(--sub)'
+                            }}>
                                 {m.timestamp.toLocaleTimeString()}
                             </div>
                             {m.from === "bot" && synthesis && (
                                 <button
                                     onClick={() => speakText(m.text)}
-                                    className="text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded mt-2 transition-colors"
                                     disabled={voiceConfig.isSpeaking}
+                                    style={{
+                                        fontSize: '10px',
+                                        background: 'var(--mist)',
+                                        border: '1px solid var(--hline)',
+                                        padding: '4px 8px',
+                                        borderRadius: 'var(--r-sm)',
+                                        marginTop: '8px',
+                                        cursor: voiceConfig.isSpeaking ? 'not-allowed' : 'pointer',
+                                        opacity: voiceConfig.isSpeaking ? 0.5 : 1
+                                    }}
                                 >
-                                    🔊 Speak
+                                    🔊 Listen
                                 </button>
                             )}
                         </div>
                     </div>
                 ))}
                 {typing && (
-                    <div className="flex justify-start">
-                        <div className="bg-gray-100 px-4 py-2 rounded-lg">
-                            <div className="flex space-x-1">
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                            </div>
-                        </div>
+                    <div className="chat-msg bot">
+                        <span className="chat-bubble typing">
+                            <i />
+                            <i />
+                            <i />
+                        </span>
                     </div>
                 )}
             </div>
 
             {/* Quick Replies */}
-            <div className="p-4 border-t bg-gray-50">
-                <div className="flex flex-wrap gap-2 mb-3">
-                    {QUICK_REPLIES.map((q) => (
-                        <button
-                            key={q}
-                            onClick={() => send(q)}
-                            className="px-3 py-1 bg-white border border-gray-300 rounded-full text-sm hover:bg-gray-50 transition-colors"
-                        >
-                            {q}
-                        </button>
-                    ))}
-                </div>
+            <div className="chatbot-quick" style={{ overflowX: 'auto', display: 'flex', gap: '8px', padding: 'clamp(8px, 2vw, 12px)', flexWrap: 'wrap', justifyContent: 'center' }}>
+                {QUICK_REPLIES.map((q) => (
+                    <button key={q} style={{ whiteSpace: 'nowrap', fontSize: 'clamp(11px, 2vw, 12px)', padding: 'clamp(6px, 1vw, 10px) clamp(10px, 2vw, 14px)' }} onClick={() => send(q)}>
+                        {q}
+                    </button>
+                ))}
             </div>
 
-            {/* Input Form */}
-            <form onSubmit={handleSubmit} className="p-4 border-t">
-                <div className="flex space-x-2">
-                    <input
-                        type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        placeholder="Ask about treks, regions, or prices..."
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                        disabled={voiceConfig.isRecording}
-                    />
-                    
-                    {/* Voice Input Button */}
-                    {recognition && (
-                        <button
-                            type="button"
-                            onClick={voiceConfig.isListening ? stopListening : startListening}
-                            className={`p-2 rounded-lg transition-colors ${
-                                voiceConfig.isListening 
-                                    ? "bg-red-500 text-white animate-pulse" 
-                                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                            }`}
-                            title={voiceConfig.isListening ? "Stop listening" : "Start voice input"}
-                        >
-                            {voiceConfig.isListening ? "🔴" : "🎙️"}
-                        </button>
-                    )}
-                    
-                    <button
-                        type="submit"
-                        disabled={!input.trim() || typing}
-                        className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-                    >
-                        Send
-                    </button>
+            {/* Voice Feature Note */}
+            {!recognition && (
+                <div style={{ 
+                    padding: 'clamp(8px, 2vw, 10px) clamp(12px, 3vw, 16px)',
+                    background: '#fef3c7',
+                    borderTop: '1px solid #fcd34d',
+                    fontSize: 'clamp(10px, 1.5vw, 11px)',
+                    color: '#78350f',
+                    textAlign: 'center'
+                }}>
+                    ℹ️ Voice input works best on Chrome/Edge. Use HTTPS for voice on all browsers.
                 </div>
+            )}
+
+            {/* Input Form */}
+            <form onSubmit={handleSubmit} className="chatbot-input" style={{ display: 'flex', gap: '8px', padding: 'clamp(8px, 2vw, 12px)' }}>
+                <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Ask about treks, regions, or prices..."
+                    disabled={voiceConfig.isRecording}
+                    style={{ flex: 1, minWidth: 0 }}
+                />
                 
-                {voiceConfig.isRecording && (
-                    <div className="mt-2 text-center text-sm text-red-600 font-medium">
-                        🎙️ Listening... Speak now!
-                    </div>
+                {/* Voice Input Button - Always visible on mobile */}
+                {recognition && (
+                    <button
+                        type="button"
+                        onClick={voiceConfig.isListening ? stopListening : startListening}
+                        className="voice-btn"
+                        title={voiceConfig.isListening ? "Stop listening" : "Click to speak (works on desktop & mobile)"}
+                        style={{
+                            background: voiceConfig.isListening 
+                                ? 'linear-gradient(135deg, #dc2626, #b91c1c)' 
+                                : 'var(--flare, #d95f24)',
+                            color: '#fff',
+                            border: 'none',
+                            borderRadius: 'var(--r-pill)',
+                            padding: 'clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px)',
+                            cursor: 'pointer',
+                            fontWeight: '600',
+                            fontSize: 'clamp(12px, 3vw, 14px)',
+                            flexShrink: 0,
+                            whiteSpace: 'nowrap'
+                        }}
+                    >
+                        {voiceConfig.isListening ? "🔴 Stop" : "🎙️ Voice"}
+                    </button>
                 )}
+                
+                <button
+                    type="submit"
+                    disabled={!input.trim() || typing}
+                    style={{
+                        opacity: (!input.trim() || typing) ? 0.5 : 1,
+                        cursor: (!input.trim() || typing) ? 'not-allowed' : 'pointer',
+                        background: 'var(--ink-2)',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: 'var(--r-pill)',
+                        padding: 'clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px)',
+                        fontSize: 'clamp(14px, 3vw, 16px)',
+                        flexShrink: 0,
+                        fontWeight: '600'
+                    }}
+                >
+                    ➤
+                </button>
             </form>
+            
+            {voiceConfig.isRecording && (
+                <div style={{ 
+                    padding: 'clamp(8px, 2vw, 12px) clamp(12px, 3vw, 16px)',
+                    textAlign: 'center',
+                    fontSize: 'clamp(11px, 2vw, 12px)',
+                    color: '#dc2626',
+                    fontWeight: '600',
+                    background: '#fef2f2',
+                    borderTop: '1px solid var(--hline)',
+                    animation: 'pulse 1s infinite'
+                }}>
+                    🎙️ Listening... Speak now! ({recognition ? 'Supported' : 'Not supported'})
+                </div>
+            )}
         </div>
     );
 }
