@@ -645,7 +645,7 @@ export default function BookingFlow({ treks, initialSlug }: BookingFlowProps) {
                             <h3>What happens next</h3>
                             <ol>
                                 <li>
-                                    Our Kathmandu team reviews availability for{" "}
+                                    Our Itanagar team reviews availability for{" "}
                                     {monthLabel(month)}.
                                 </li>
                                 <li>
