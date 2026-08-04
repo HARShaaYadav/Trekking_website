@@ -189,7 +189,7 @@ export default function BlogScreen() {
                                 <datalist id="admin-blog-cats">
                                     {[
                                         "Planning",
-                                        "Everest",
+                                        "Tawang",
                                         "Compare",
                                         "Culture",
                                         "Gear",
