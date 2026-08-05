@@ -1064,7 +1064,7 @@ export default function TrekEditorScreen() {
                                 type="text"
                                 value={form.regionLabel}
                                 onChange={(e) => update("regionLabel", e.target.value)}
-                                placeholder="Khumbu, Solukhumbu District"
+                                placeholder="Tawang, Tawang District"
                             />
                         </Field>
 
