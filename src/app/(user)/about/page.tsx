@@ -411,9 +411,9 @@ export default function AboutPage() {
                             &ldquo;
                         </span>
                         <p>
-                            I grew up in Khumbu. My father was a porter, my
-                            brother is a guide. When I lead a group to Everest
-                            Base Camp, I&rsquo;m not showing them a trail — I&rsquo;m
+                            I grew up in Tawang. My father was a porter, my
+                            brother is a guide. When I lead a group to Tawang
+                            Monastery, I&rsquo;m not showing them a trail — I&rsquo;m
                             showing them the valley I was raised in.
                         </p>
                         <footer className={styles.quoteFooter}>
@@ -421,7 +421,7 @@ export default function AboutPage() {
                                 PS
                             </span>
                             <strong>Pemba Sherpa</strong>
-                            <span>Head Trek Leader, Khumbu</span>
+                            <span>Head Trek Leader, Tawang</span>
                         </footer>
                     </blockquote>
                 </div>
