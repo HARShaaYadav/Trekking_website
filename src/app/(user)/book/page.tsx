@@ -7,7 +7,7 @@ import { breadcrumbJsonLd, buildMetadata, serviceJsonLd } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
     title: "Book a Trek",
     description:
-        "Reserve your place on a Arunachal trek — pick a route, choose your departure, and send your details. Availability and pricing are confirmed within 24 hours.",
+        "Reserve your place on an Arunachal Pradesh trek — pick a route, choose your departure, and send your details. Availability and pricing are confirmed within 24 hours.",
     path: "/book",
 });
 
@@ -40,10 +40,10 @@ export default async function BookPage({ searchParams }: BookPageProps) {
             <section className="page-hero">
                 <div className="wrap">
                     <div className="eyebrow">Book a Trek</div>
-                    <h1>Reserve your place in the Himalaya.</h1>
+                    <h1>Reserve your place in the Eastern Himalayas.</h1>
                     <p className="lede">
                         Pick a route, choose your dates, and send us your details. A
-                        Kathmandu-based team confirms availability and pricing within 24
+                        Itanagar-based team confirms availability and pricing within 24
                         hours.
                     </p>
                 </div>
