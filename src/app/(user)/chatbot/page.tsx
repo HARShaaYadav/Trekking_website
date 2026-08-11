@@ -8,49 +8,124 @@ export const metadata = {
 
 export default function ChatBotPageRoute() {
     return (
-        <div className="min-h-screen bg-slate-50">
-            <div className="container mx-auto px-4 py-8">
-                <div className="max-w-4xl mx-auto">
-                    <div className="text-center mb-8">
-                        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                            Meet TrekBot 🤖
-                        </h1>
-                        <p className="text-xl text-gray-600 mb-6">
-                            Your AI travel assistant for Arunachal Pradesh trekking adventures
-                        </p>
-                        <div className="flex flex-wrap justify-center gap-4 mb-6">
-                            <div className="bg-white px-4 py-2 rounded-full shadow-sm">
-                                💬 Chat with AI
-                            </div>
-                            <div className="bg-white px-4 py-2 rounded-full shadow-sm">
-                                🎙️ Voice Support
-                            </div>
-                            <div className="bg-white px-4 py-2 rounded-full shadow-sm">
-                                🗣️ Text-to-Speech
-                            </div>
-                        </div>
+        <div className="min-h-screen" style={{ backgroundColor: 'var(--mist)' }}>
+            {/* Hero Section */}
+            <div className="page-hero">
+                <div className="wrap">
+                    <div className="eyebrow">
+                        <span>AI Assistant</span>
                     </div>
-                    
-                    <ChatBotPage />
-                    
-                    <div className="mt-8 text-center">
-                        <div className="bg-white rounded-lg p-6 shadow-sm">
-                            <h2 className="text-2xl font-semibold mb-4">
-                                Need Human Help?
-                            </h2>
-                            <p className="text-gray-600 mb-4">
-                                While TrekBot is great at answering questions, sometimes you need to speak with a real trekking expert.
-                            </p>
-                            <Link
-                                href="/contact"
-                                className="inline-block bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors"
-                            >
-                                Contact Our Team →
-                            </Link>
-                        </div>
-                    </div>
+                    <h1>Meet TrekBot 🤖</h1>
+                    <p className="lede">
+                        Your intelligent AI travel assistant for Arunachal Pradesh trekking adventures. 
+                        Get personalized recommendations, ask questions about routes, and plan your perfect trek 
+                        with advanced voice support and natural conversation.
+                    </p>
                 </div>
             </div>
+
+            {/* Main Chat Interface */}
+            <section className="wrap" style={{ paddingTop: 'var(--sec)', paddingBottom: 'var(--sec)' }}>
+                <div className="reveal">
+                    {/* Feature highlights */}
+                    <div style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+                        gap: '20px',
+                        marginBottom: '40px',
+                        textAlign: 'center'
+                    }}>
+                        <div style={{ 
+                            background: '#fff', 
+                            padding: '20px',
+                            borderRadius: 'var(--r-lg)',
+                            boxShadow: 'var(--shadow-sm)',
+                            border: '1px solid var(--hline)'
+                        }}>
+                            <div style={{ fontSize: '32px', marginBottom: '12px' }}>💬</div>
+                            <div style={{ fontWeight: '600', color: 'var(--ink)' }}>Smart Chat</div>
+                            <div style={{ fontSize: '13px', color: 'var(--sub)', marginTop: '4px' }}>
+                                Natural conversation about treks
+                            </div>
+                        </div>
+                        <div style={{ 
+                            background: '#fff', 
+                            padding: '20px',
+                            borderRadius: 'var(--r-lg)',
+                            boxShadow: 'var(--shadow-sm)',
+                            border: '1px solid var(--hline)'
+                        }}>
+                            <div style={{ fontSize: '32px', marginBottom: '12px' }}>🎙️</div>
+                            <div style={{ fontWeight: '600', color: 'var(--ink)' }}>Voice Input</div>
+                            <div style={{ fontSize: '13px', color: 'var(--sub)', marginTop: '4px' }}>
+                                Speak your questions naturally
+                            </div>
+                        </div>
+                        <div style={{ 
+                            background: '#fff', 
+                            padding: '20px',
+                            borderRadius: 'var(--r-lg)',
+                            boxShadow: 'var(--shadow-sm)',
+                            border: '1px solid var(--hline)'
+                        }}>
+                            <div style={{ fontSize: '32px', marginBottom: '12px' }}>🗣️</div>
+                            <div style={{ fontWeight: '600', color: 'var(--ink)' }}>Audio Responses</div>
+                            <div style={{ fontSize: '13px', color: 'var(--sub)', marginTop: '4px' }}>
+                                Hear answers with text-to-speech
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {/* Chat Interface */}
+                    <div style={{ 
+                        maxWidth: '900px', 
+                        margin: '0 auto',
+                        background: '#fff',
+                        borderRadius: 'var(--r-xl)',
+                        boxShadow: 'var(--shadow-lg)',
+                        border: '1px solid var(--hline)',
+                        overflow: 'hidden'
+                    }}>
+                        <ChatBotPage />
+                    </div>
+                </div>
+            </section>
+            
+            {/* Call to Action */}
+            <section style={{ 
+                background: 'var(--night)', 
+                color: 'var(--mist)',
+                padding: 'var(--sec) 0'
+            }}>
+                <div className="wrap" style={{ textAlign: 'center' }}>
+                    <h2 style={{ 
+                        fontFamily: 'var(--font-serif)',
+                        fontSize: 'clamp(28px, 4vw, 40px)',
+                        marginBottom: '20px',
+                        color: 'var(--mist)'
+                    }}>
+                        Need Human Expertise?
+                    </h2>
+                    <p style={{ 
+                        fontSize: '16px',
+                        color: 'var(--stone)',
+                        marginBottom: '32px',
+                        maxWidth: '540px',
+                        margin: '0 auto 32px'
+                    }}>
+                        While TrekBot is incredibly knowledgeable, sometimes you need the personal touch 
+                        of our experienced trek guides who know every trail in Arunachal Pradesh.
+                    </p>
+                    <Link
+                        href="/contact"
+                        className="nav-cta"
+                        style={{ display: 'inline-flex' }}
+                    >
+                        <span>Contact Our Expert Team</span>
+                        <span style={{ fontSize: '16px' }}>→</span>
+                    </Link>
+                </div>
+            </section>
         </div>
     );
 }
