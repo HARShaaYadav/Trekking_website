@@ -24,12 +24,12 @@ export const metadata: Metadata = buildMetadata({
    ---------------------------------------------------------------- */
 const CONTACT = {
     address: "Trekking Arunachal Pradesh, Itanagar, Arunachal Pradesh 791111, India",
-    phoneDisplay: "+91-360-226-0000",
-    phoneHref: "tel:+91-360-226-0000",
+    phoneDisplay: "+91 60092 76459",
+    phoneHref: "tel:+916009276459",
     email: "hello@trekking-arunachal.com",
     emailHref: "mailto:hello@trekking-arunachal.com",
-    whatsappDisplay: "+91-98XX XXXXXX",
-    whatsappHref: "https://wa.me/919898XXXXXX",
+    whatsappDisplay: "+91 60092 76459",
+    whatsappHref: "https://wa.me/916009276459",
     hours: "Monday–Saturday, 9:00–18:00 IST",
     hoursNote: "India Standard Time (IST) is UTC+5:30",
     responseTime: "Enquiries are typically answered within 24 hours on office days.",
@@ -53,8 +53,8 @@ const TILES: Tile[] = [
     {
         icon: "\uD83D\uDCCD",
         label: "Visit",
-        value: "Thamel, Kathmandu",
-        sub: "44600, Nepal",
+        value: "Bank Tinali, Itanagar",
+        sub: "791111, Arunachal Pradesh, India",
         href: CONTACT.mapsDirections,
     },
     {
@@ -105,7 +105,7 @@ const STEPS = [
     {
         num: "02",
         title: "An expert replies",
-        desc: "A Kathmandu-based trek leader answers within 24 hours with route options and dates.",
+        desc: "An Itanagar-based trek leader answers within 24 hours with route options and dates.",
     },
     {
         num: "03",
@@ -165,14 +165,14 @@ export default function ContactPage() {
                 </div>
 
                 <span className={styles.heroRail} aria-hidden="true">
-                    Thamel &middot; Kathmandu &middot; NPT +5:45
+                    Bank Tinali &middot; Itanagar &middot; IST +5:30
                 </span>
 
                 <div className={`wrap ${styles.heroContent}`}>
                     <div className={styles.heroEyebrow}>Contact</div>
                     <h1>Tell us where you want to go.</h1>
                     <p className={styles.heroLede}>
-                        Fill in a few details and a Kathmandu-based trek expert
+                        Fill in a few details and an Itanagar-based trek expert
                         will reply within 24 hours with route options, dates and
                         pricing.
                     </p>
@@ -251,7 +251,7 @@ export default function ContactPage() {
                                 <div className="sec-eyebrow">Plan My Trek</div>
                                 <h2>Send an enquiry</h2>
                             </div>
-                            <span className={styles.cardTag}>Thamel &middot; Kathmandu</span>
+                            <span className={styles.cardTag}>Bank Tinali &middot; Itanagar</span>
                         </div>
                         <ContactForm />
                     </div>
@@ -306,7 +306,7 @@ export default function ContactPage() {
                     <div className={styles.mapFrame}>
                         <iframe
                             src={CONTACT.mapsEmbed}
-                            title="Map showing the Trekking Nepal office in Thamel, Kathmandu"
+                            title="Map showing the Trekking Arunachal Pradesh office in Itanagar"
                             loading="lazy"
                             allowFullScreen
                             referrerPolicy="no-referrer-when-downgrade"
@@ -314,7 +314,7 @@ export default function ContactPage() {
                     </div>
                     <div className={styles.mapCard}>
                         <div className={styles.mapEyebrow}>Find Us</div>
-                        <h2>On foot in Thamel, minutes from the Garden of Dreams.</h2>
+                        <h2>On foot in Itanagar, minutes from the Itanagar Wildlife Sanctuary.</h2>
                         <div className={styles.mapRow}>
                             <span className={styles.mapRowIcon} aria-hidden="true">
                                 {"\uD83D\uDCCD"}
