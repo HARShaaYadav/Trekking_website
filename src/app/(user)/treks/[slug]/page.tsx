@@ -13,6 +13,10 @@ import StickyCta from "@/components/trek/StickyCta";
 import RelatedTreks from "@/components/trek/RelatedTreks";
 import TrekSubNav from "@/components/trek/TrekSubNav";
 import TrekGallery, { type GalleryImage } from "@/components/trek/TrekGallery";
+import WeatherWidget from "@/components/WeatherWidget";
+import ReviewSection from "@/components/trek/ReviewSection";
+import OfflineTrailPack from "@/components/trek/OfflineTrailPack";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import { treks } from "@/data/treks";
 import { GUIDES, TESTIMONIALS } from "@/data/trek-people";
 import { trekVideo } from "@/data/trek-videos";
@@ -150,7 +154,7 @@ function guidesFor(trek: Trek): TrekGuide[] {
     if (trek.guides && trek.guides.length > 0) return trek.guides;
     const byRegion = GUIDES.filter((g) => g.region === trek.region);
     if (byRegion.length > 0) return byRegion;
-    return GUIDES.filter((g) => g.region === "kathmandu");
+    return GUIDES.filter((g) => g.region === "itanagar");
 }
 
 /** Photos for the gallery section. Curated `trek.gallery` photos (real,
@@ -189,7 +193,7 @@ function galleryFor(trek: Trek, allTreks: Trek[]): GalleryImage[] {
             .forEach((t) =>
                 push(
                     t.image,
-                    `${t.name} — Nepal Himalaya`,
+                    `${t.name} — Eastern Himalayas of Arunachal Pradesh`,
                     t.region === trek.region && t.slug !== trek.slug
                         ? `More from ${trek.regionLabel}`
                         : undefined
@@ -452,6 +456,16 @@ export default async function TrekDetailPage({
                             </div>
                         </section>
 
+                        {/* Live Mountain Weather Forecast */}
+                        <section className="sec-block" id="weather">
+                            <SectionHead
+                                eyebrow="Mountain Climate"
+                                title="Live weather & trail conditions"
+                                lead="Arunachal's high valleys experience distinct microclimates. Check live altitude metrics and forecasts."
+                            />
+                            <WeatherWidget location={t.region} />
+                        </section>
+
                         {/* 7 — Day-by-Day Itinerary */}
                         <section className="sec-block" id="itinerary">
                             <SectionHead
@@ -679,6 +693,11 @@ export default async function TrekDetailPage({
                             <PackingList categories={t.packingList} trekName={t.name} />
                         </section>
 
+                        {/* Offline Trail Pack & Mobile Rucksack Checklist */}
+                        <section className="sec-block" id="offline-trail-pack">
+                            <OfflineTrailPack trek={t} />
+                        </section>
+
                         {/* 19 — Fitness & BMI */}
                         <section className="sec-block" id="fitness">
                             <SectionHead
@@ -734,34 +753,34 @@ export default async function TrekDetailPage({
                     {/* ---- Sticky sidebar ---- */}
                     <aside className="td-side">
                         <StickyCta trek={t} />
+                        <div style={{ marginTop: "16px", textAlign: "center" }}>
+                            <WhatsAppButton
+                                style="inline"
+                                trekName={t.name}
+                                days={t.days}
+                                size="md"
+                            />
+                        </div>
                     </aside>
                 </div>
             </div>
 
             {/* 23 — Reviews / Testimonials */}
-            {reviews.length > 0 && (
-                <section className="sec-block sec-block--band" id="reviews">
-                    <div className="wrap reveal">
-                        <SectionHead
-                            eyebrow="Reviews"
-                            title="What trekkers say"
-                            center
-                        />
-                        <div className="reviews-grid">
-                            {reviews.map((r) => (
-                                <article key={r.name} className="review-card reveal">
-                                    <Stars />
-                                    <blockquote>“{r.quote}”</blockquote>
-                                    <footer>
-                                        <strong>{r.name}</strong>
-                                        <span>{r.trek}</span>
-                                    </footer>
-                                </article>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-            )}
+            <section className="sec-block sec-block--band" id="reviews">
+                <div className="wrap reveal">
+                    <SectionHead
+                        eyebrow="Trekker Reviews"
+                        title={`What trekkers say about ${t.name}`}
+                        lead="Real verified feedback from travellers and mountaineers who walked this trail."
+                        center
+                    />
+                    <ReviewSection
+                        trekSlug={t.slug}
+                        trekName={t.name}
+                        fallbackReviews={reviews}
+                    />
+                </div>
+            </section>
 
             {/* 24 — Your Local Guide */}
             {guides.length > 0 && (
