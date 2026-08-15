@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 import TrekCard from "@/components/TrekCard";
+import TrekRecommendationWizard from "@/components/ai/TrekRecommendationWizard";
 import TreksSidebar, {
     type SidebarGroup,
     type SidebarOption,
@@ -432,6 +433,13 @@ export default async function TreksPage({ searchParams }: TreksPageProps) {
                             )}
                         </div>
                     </div>
+                </div>
+            </section>
+
+            {/* AI Recommendation Wizard */}
+            <section className="sec-block sec-block--band" id="ai-recommender">
+                <div className="wrap reveal">
+                    <TrekRecommendationWizard />
                 </div>
             </section>
         </>
