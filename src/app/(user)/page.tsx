@@ -4,6 +4,7 @@ import Link from "next/link";
 import HeroContours from "@/components/HeroContours";
 import JsonLd from "@/components/JsonLd";
 import TrekCard from "@/components/TrekCard";
+import WeatherWidget from "@/components/WeatherWidget";
 import { treks } from "@/data/treks";
 import { buildMetadata, itemListJsonLd } from "@/lib/seo";
 
@@ -68,6 +69,63 @@ export default function HomePage() {
                 <div className="wrap reveal">
                     <div className="sec-head"><div className="sec-eyebrow">Destinations</div><h2>Follow the trail into Arunachal.</h2><p>Each region brings a different landscape, culture and way of walking.</p></div>
                     <div className="dest-grid">{DESTINATIONS.map((destination) => <Link key={destination.value} href={`/treks?region=${destination.value}`} className="dest-card"><span className="dest-tag">{destination.tag}</span><h3>{destination.name}</h3><p>{destination.desc}</p><span className="dest-link">Explore routes →</span></Link>)}</div>
+                </div>
+            </section>
+
+            {/* Interactive Trail Atlas Feature Callout */}
+            <section className="sec-block sec-block--band" style={{ background: "linear-gradient(180deg, #132130 0%, #0d1721 100%)", color: "#f4efe5", padding: "60px 0" }}>
+                <div className="wrap reveal" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "36px", alignItems: "center" }}>
+                    <div>
+                        <span style={{ fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--flare, #d95f24)", fontWeight: 700 }}>
+                            Himalayan Navigation
+                        </span>
+                        <h2 style={{ fontSize: "clamp(26px, 3.5vw, 38px)", color: "#fff", fontFamily: "var(--font-serif)", margin: "8px 0 14px 0" }}>
+                            Explore Arunachal on our Interactive Trail Atlas
+                        </h2>
+                        <p style={{ fontSize: "15px", color: "var(--stone, #cfc7b6)", lineHeight: 1.6, marginBottom: "24px" }}>
+                            From Sela Pass to the Seven Glacial Lakes of Anini, visualize elevations, daily stage waypoints, live regional weather, and trail difficulty ratings across every mountain district.
+                        </p>
+                        <div style={{ display: "flex", gap: "14px", flexWrap: "wrap" }}>
+                            <Link href="/map" className="btn btn-primary">
+                                Open Interactive Trail Map →
+                            </Link>
+                            <Link href="/community" className="btn btn-ghost" style={{ color: "#fff", borderColor: "rgba(255,255,255,0.2)" }}>
+                                Trekker Community & Trail Updates
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div style={{
+                        background: "rgba(255,255,255,0.03)",
+                        border: "1px solid rgba(255,255,255,0.1)",
+                        borderRadius: "var(--r-lg, 16px)",
+                        padding: "24px",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "16px"
+                    }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                            <span style={{ fontSize: "28px" }}>🗺️</span>
+                            <div>
+                                <strong style={{ color: "#fff", fontSize: "15px", display: "block" }}>GPS Waypoints & Contours</strong>
+                                <span style={{ fontSize: "12px", color: "var(--stone, #cfc7b6)" }}>Interactive district pins and elevation curves</span>
+                            </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                            <span style={{ fontSize: "28px" }}>⛅</span>
+                            <div>
+                                <strong style={{ color: "#fff", fontSize: "15px", display: "block" }}>Live Mountain Weather</strong>
+                                <span style={{ fontSize: "12px", color: "var(--stone, #cfc7b6)" }}>Altitude advisories & 4-day regional forecasts</span>
+                            </div>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                            <span style={{ fontSize: "28px" }}>📱</span>
+                            <div>
+                                <strong style={{ color: "#fff", fontSize: "15px", display: "block" }}>Offline Trail Packs (PWA)</strong>
+                                <span style={{ fontSize: "12px", color: "var(--stone, #cfc7b6)" }}>Save routes & packing checklists on your device</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
