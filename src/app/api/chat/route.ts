@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { treks } from "@/data/treks";
 
-const DEEPSEEK_URL = "https://api.deepseek.com/chat/completions";
+const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 /**
  * Build a compact, factual profile of every trek so the model answers with
@@ -45,10 +45,10 @@ AVAILABLE TREKS:
 __TREKS__`;
 
 export async function POST(req: Request) {
-    const apiKey = process.env.DEEPSEEK_API_KEY;
+    const apiKey = process.env.OPENROUTER_API_KEY;
     if (!apiKey) {
         return NextResponse.json(
-            { error: "AI assistant is not configured yet. Set DEEPSEEK_API_KEY in your environment." },
+            { error: "AI assistant is not configured yet. Set OPENROUTER_API_KEY in your environment." },
             { status: 503 }
         );
     }
@@ -65,7 +65,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Message is required." }, { status: 400 });
     }
 
-    const model = process.env.DEEPSEEK_MODEL || "deepseek-chat";
+    const model = process.env.OPENROUTER_MODEL || "anthropic/claude-3.5-sonnet";
     const payload = {
         model,
         messages: [
@@ -78,11 +78,13 @@ export async function POST(req: Request) {
     };
 
     try {
-        const res = await fetch(DEEPSEEK_URL, {
+        const res = await fetch(OPENROUTER_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${apiKey}`,
+                "Authorization": `Bearer ${apiKey}`,
+                "HTTP-Referer": process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000", // Required by OpenRouter
+                "X-Title": "Trekking Arunachal Pradesh", // Optional, for OpenRouter analytics
             },
             body: JSON.stringify(payload),
         });
@@ -90,7 +92,7 @@ export async function POST(req: Request) {
         if (!res.ok) {
             const errText = await res.text();
             return NextResponse.json(
-                { error: `DeepSeek API error (${res.status}): ${errText.slice(0, 200)}` },
+                { error: `OpenRouter API error (${res.status}): ${errText.slice(0, 200)}` },
                 { status: res.status }
             );
         }
@@ -98,13 +100,13 @@ export async function POST(req: Request) {
         const data = await res.json();
         const reply = data?.choices?.[0]?.message?.content?.trim();
         if (!reply) {
-            return NextResponse.json({ error: "Empty response from DeepSeek." }, { status: 502 });
+            return NextResponse.json({ error: "Empty response from OpenRouter." }, { status: 502 });
         }
 
         return NextResponse.json({ reply });
     } catch (err) {
         return NextResponse.json(
-            { error: err instanceof Error ? err.message : "Failed to reach DeepSeek." },
+            { error: err instanceof Error ? err.message : "Failed to reach OpenRouter." },
             { status: 500 }
         );
     }
