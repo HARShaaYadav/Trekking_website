@@ -592,6 +592,28 @@ nav.wrap {
     background: var(--flare-soft);
 }
 
+/* Weather header badge */
+.weather-header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(13, 23, 33, 0.06);
+    border: 1px solid rgba(13, 23, 33, 0.14);
+    border-radius: var(--r-pill, 999px);
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--ink-2, #3a424c);
+    text-decoration: none;
+    transition: background 0.25s var(--ease), border-color 0.25s var(--ease), color 0.25s var(--ease);
+    white-space: nowrap;
+}
+
+.weather-header-badge:hover {
+    background: rgba(217, 95, 36, 0.1);
+    border-color: var(--flare, #d95f24);
+    color: var(--flare, #d95f24);
+}
+
 /* Signed-in user chip shown in the navbar */
 .nav-user {
     display: inline-flex;
