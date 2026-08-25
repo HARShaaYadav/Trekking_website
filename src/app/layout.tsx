@@ -4,6 +4,9 @@ import "./places-detail.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ChatBot from "@/components/chatbot";
+import WhatsAppButton from "@/components/WhatsAppButton";
+import PwaRegister from "@/components/pwa/PwaRegister";
+import PwaInstallBanner from "@/components/pwa/PwaInstallBanner";
 import RevealProvider from "@/components/RevealProvider";
 import SiteChrome from "@/components/SiteChrome";
 import AuthProvider from "@/components/AuthProvider";
@@ -65,9 +68,6 @@ export const metadata: Metadata = {
     },
     category: "travel",
     manifest: "/manifest.webmanifest",
-    // icon.svg (favicon) and apple-icon.tsx (apple touch icon) are
-    // auto-discovered by Next.js from src/app/ and injected into <head>
-    // with their correct URLs, so no manual `icons` config is needed here.
     verification: {
         google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
     },
@@ -100,6 +100,7 @@ export default function RootLayout({
                 />
             </head>
             <body>
+                <PwaRegister />
                 <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
                 <a href="#main" className="skip-link">
                     Skip to content
@@ -112,6 +113,8 @@ export default function RootLayout({
                     <SiteChrome>
                         <Footer />
                         <ChatBot />
+                        <WhatsAppButton style="floating" />
+                        <PwaInstallBanner />
                     </SiteChrome>
                     <RevealProvider />
                 </AuthProvider>
