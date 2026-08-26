@@ -94,7 +94,7 @@ export default function OpenGraphImage() {
                             lineHeight: 1.3,
                         }}
                     >
-                        Everest · Annapurna · Manaslu · Langtang · Mustang · Kanchenjunga
+                        Tawang · West Kameng · Anjaw · Lower Subansiri · Dibang Valley · Ziro
                     </div>
                 </div>
             </div>
