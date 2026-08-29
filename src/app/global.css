@@ -3862,8 +3862,19 @@ footer .wrap {
     transition: background 0.2s var(--ease), transform 0.2s var(--ease);
 }
 
+.chatbot-input .voice-btn {
+    background: linear-gradient(135deg, var(--ice), var(--slate-2));
+    color: var(--night);
+    font-size: 16px;
+}
+
 .chatbot-input button:hover {
     transform: translateY(-1px) scale(1.05);
+}
+
+.chatbot-input .voice-btn:hover {
+    background: linear-gradient(135deg, var(--slate), var(--night));
+    color: var(--mist);
 }
 
 .chatbot-footer {
