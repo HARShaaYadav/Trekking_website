@@ -204,7 +204,10 @@ export default function ChatBot() {
                     className={`chatbot-panel ${isFullscreen ? "chatbot-fullscreen" : ""}`} 
                     role="dialog" 
                     aria-label="TrekBot AI assistant"
-                    onDoubleClick={() => setIsFullscreen(!isFullscreen)}
+                    onDoubleClick={() => {
+                        // Route to full chatbot page on double-click
+                        window.location.href = '/chatbot';
+                    }}
                     style={isFullscreen ? { width: '90vw', height: '90vh', maxWidth: 'none', maxHeight: 'none', bottom: '5vh', right: '5vw' } : {}}
                 >
                     <div className="chatbot-header">
@@ -214,7 +217,7 @@ export default function ChatBot() {
                         <div>
                             <strong>TrekBot</strong>
                             <span className="chatbot-status">
-                                Online · AI assistant
+                                Online · AI assistant · Double-click for full features
                             </span>
                         </div>
                         <button
@@ -260,6 +263,18 @@ export default function ChatBot() {
                             placeholder="Ask about a trek, region or price..."
                             aria-label="Chat message"
                         />
+                        <button
+                            type="button"
+                            className="voice-btn"
+                            title="Use voice input"
+                            onClick={() => {
+                                // For now, redirect to full chatbot page with voice features
+                                window.location.href = '/chatbot';
+                            }}
+                            aria-label="Voice input"
+                        >
+                            🎙️
+                        </button>
                         <button type="submit" aria-label="Send message">
                             ➤
                         </button>
