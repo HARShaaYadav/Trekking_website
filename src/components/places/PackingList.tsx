@@ -42,7 +42,7 @@ const DEFAULT_PACKING_LIST: PackingCategory[] = [
         items: [
             "Daypack (30–40 L) with rain cover",
             "Sleeping bag rated to the trek's coldest night",
-            "Trekking poles (can also be rented in Kathmandu)",
+            "Trekking poles (can also be rented in Itanagar)",
             "Headlamp or torch with spare batteries",
         ],
     },
