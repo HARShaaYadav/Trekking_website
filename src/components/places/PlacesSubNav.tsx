@@ -19,8 +19,9 @@ interface TrekSubNavProps {
     links: TrekSubNavLink[];
 }
 
-/** Sections are considered "in view" once their top passes this offset. */
-const ACTIVE_OFFSET = 150;
+/** Sections are considered "in view" once their top passes this offset.
+ *  Accounts for the fixed header (78px) + sticky subnav (~50px) + buffer. */
+const ACTIVE_OFFSET = 140;
 
 export default function TrekSubNav({ links }: TrekSubNavProps) {
     const [active, setActive] = useState<string>(links[0]?.id ?? "");
@@ -60,6 +61,15 @@ export default function TrekSubNav({ links }: TrekSubNavProps) {
                                 ? "trek-subnav-link is-active"
                                 : "trek-subnav-link"
                         }
+                        onClick={(e) => {
+                            e.preventDefault();
+                            const el = document.getElementById(link.id);
+                            if (el) {
+                                const top = el.getBoundingClientRect().top + window.scrollY;
+                                const offset = 78 + 50 + 8; // header + subnav + gap
+                                window.scrollTo({ top: top - offset, behavior: "smooth" });
+                            }
+                        }}
                     >
                         {link.label}
                     </a>
