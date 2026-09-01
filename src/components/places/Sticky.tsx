@@ -16,8 +16,8 @@
 import { useEffect, useState } from "react";
 import type { Trek } from "@/lib/types";
 
-/** Full international number without "+" or spaces, e.g. "9779812345678". */
-const WHATSAPP_NUMBER = "";
+/** Full international number without "+" or spaces, e.g. "916009276459". */
+const WHATSAPP_NUMBER = "916009276459";
 
 function bookHref(slug: string): string {
     return `/book?trek=${encodeURIComponent(slug)}`;
