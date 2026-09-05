@@ -426,7 +426,12 @@ header {
     border-bottom: 1px solid rgba(21, 26, 32, 0.06);
     color: var(--ink);
     transition: padding 0.35s var(--ease), background 0.35s var(--ease),
-        box-shadow 0.35s var(--ease);
+        box-shadow 0.35s var(--ease), transform 0.35s var(--ease);
+}
+
+/* The header yields space to long content while reading and returns on upward scroll. */
+header.header-hidden {
+    transform: translateY(-110%);
 }
 
 header.solid,
@@ -437,10 +442,9 @@ header.on-light {
 }
 
 nav.wrap {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
+    display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 16px;
     max-width: none;
 }
 
@@ -448,8 +452,7 @@ nav.wrap {
     display: inline-flex;
     align-items: baseline;
     gap: 10px;
-    grid-column: 1;
-    justify-self: start;
+    flex: 0 0 auto;
     transition: opacity 0.2s var(--ease);
 }
 
@@ -479,8 +482,8 @@ nav.wrap {
     align-items: center;
     justify-content: flex-end;
     gap: 6px;
-    justify-self: end;
-    grid-column: 3;
+    margin-left: auto;
+    flex: 0 0 auto;
 }
 
 /* Account actions pinned to the far right of the full-width navbar */
@@ -913,10 +916,9 @@ nav.wrap {
    ============================================================ */
 .searchbar {
     position: relative;
-    justify-self: center;
-    grid-column: 2;
-    width: 100%;
-    max-width: 560px;
+    flex: 1 1 180px;
+    width: auto;
+    max-width: 280px;
 }
 
 .searchbar-inner {

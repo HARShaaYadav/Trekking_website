@@ -15,6 +15,9 @@ const NAV_LINKS = [
     { href: "/book", label: "Packages" },
     { href: "/store", label: "Store" },
     { href: "/hub", label: "Trail Hub" },
+];
+
+const MORE_LINKS = [
     { href: "/map", label: "Trail Map" },
     { href: "/weather", label: "Weather" },
     { href: "/community", label: "Community" },
@@ -29,16 +32,25 @@ export default function Header() {
     const isHome = pathname === "/";
     // Inner pages start solid; the home hero starts transparent until you scroll.
     const [solid, setSolid] = useState(!isHome);
+    const [hidden, setHidden] = useState(false);
     const [open, setOpen] = useState(false);
     const [dropOpen, setDropOpen] = useState(false);
+    const [moreOpen, setMoreOpen] = useState(false);
     const dropRef = useRef<HTMLDivElement>(null);
+    const moreRef = useRef<HTMLDivElement>(null);
+    const lastScrollY = useRef(0);
 
     useEffect(() => {
         if (!isHome) {
             setSolid(true);
-            return;
         }
-        const onScroll = () => setSolid(window.scrollY > 40);
+        const onScroll = () => {
+            const nextScrollY = window.scrollY;
+            setSolid(!isHome || nextScrollY > 40);
+            // Keep the reading area clear while moving down; reveal navigation on upward scroll.
+            setHidden(nextScrollY > 96 && nextScrollY > lastScrollY.current);
+            lastScrollY.current = nextScrollY;
+        };
         onScroll();
         window.addEventListener("scroll", onScroll);
         return () => window.removeEventListener("scroll", onScroll);
@@ -48,6 +60,7 @@ export default function Header() {
     useEffect(() => {
         setOpen(false);
         setDropOpen(false);
+        setMoreOpen(false);
     }, [pathname]);
 
     // Close the Choose Trek dropdown when clicking outside of it
@@ -56,13 +69,16 @@ export default function Header() {
             if (dropRef.current && !dropRef.current.contains(e.target as Node)) {
                 setDropOpen(false);
             }
+            if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+                setMoreOpen(false);
+            }
         };
         document.addEventListener("mousedown", onDocDown);
         return () => document.removeEventListener("mousedown", onDocDown);
     }, []);
 
     return (
-        <header className={solid ? "solid" : ""}>
+        <header className={`${solid ? "solid" : ""} ${hidden ? "header-hidden" : ""}`}>
             <nav className="wrap" aria-label="Main navigation">
                 <Link href="/" className="logo" onClick={() => setOpen(false)}>
                     <span className="mark">Trekking</span>
@@ -140,6 +156,27 @@ export default function Header() {
                             </Link>
                         );
                     })}
+                    <div className="nav-drop nav-more" ref={moreRef}>
+                        <button
+                            type="button"
+                            className="nav-drop-btn"
+                            aria-expanded={moreOpen}
+                            aria-haspopup="true"
+                            onClick={() => setMoreOpen((value) => !value)}
+                        >
+                            More
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                        </button>
+                        <div className={`nav-drop-menu ${moreOpen ? "open" : ""}`} aria-hidden={!moreOpen}>
+                            {MORE_LINKS.map((link) => (
+                                <Link key={link.href} href={link.href} className="nav-drop-link" onClick={() => { setMoreOpen(false); setOpen(false); }}>
+                                    <span className="t-name">{link.label}</span>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
                     <div className="nav-actions">
                         {session?.user ? (
                             <>
@@ -212,7 +249,10 @@ export default function Header() {
                     aria-label="Menu"
                     aria-controls="navLinks"
                     aria-expanded={open}
-                    onClick={() => setOpen((v) => !v)}
+                    onClick={() => {
+                        setHidden(false);
+                        setOpen((v) => !v);
+                    }}
                 >
                     <span />
                     <span />
