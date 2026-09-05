@@ -77,7 +77,7 @@ export default function DashboardScreen() {
                 <div>
                     <h1>Welcome back, {firstName}</h1>
                     <p>
-                        This is the Trekking Arunachal admin panel. Manage your treks,
+                        This is Trekking Arunachal admin panel. Manage your treks,
                         blog, bookings and enquiries from here. Changes are saved to
                         your browser.
                     </p>
