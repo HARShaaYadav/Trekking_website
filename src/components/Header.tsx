@@ -12,6 +12,9 @@ import { treks } from "@/data/treks";
 const NAV_LINKS = [
     { href: "/", label: "Home" },
     { href: "/treks", label: "Treks" },
+    { href: "/book", label: "Packages" },
+    { href: "/store", label: "Store" },
+    { href: "/hub", label: "Trail Hub" },
     { href: "/map", label: "Trail Map" },
     { href: "/weather", label: "Weather" },
     { href: "/community", label: "Community" },
@@ -141,7 +144,7 @@ export default function Header() {
                         {session?.user ? (
                             <>
                                 <Link
-                                    href="/account"
+                                    href="/hub"
                                     className="nav-user"
                                     title={session.user.email ?? undefined}
                                     onClick={() => setOpen(false)}

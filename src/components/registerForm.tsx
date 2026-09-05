@@ -35,6 +35,7 @@ export default function RegisterForm({ onSwitch }: { onSwitch?: () => void } = {
     const [email, setEmail] = useState("");
     const [phone, setPhone] = useState("");
     const [country, setCountry] = useState("");
+    const [role, setRole] = useState<"tourist" | "guide" | "seller">("tourist");
     const [password, setPassword] = useState("");
     const [confirm, setConfirm] = useState("");
 
@@ -74,6 +75,7 @@ export default function RegisterForm({ onSwitch }: { onSwitch?: () => void } = {
                     name: fullName,
                     email,
                     password,
+                    role,
                 }),
             });
             const data = (await res.json()) as {
@@ -113,7 +115,8 @@ export default function RegisterForm({ onSwitch }: { onSwitch?: () => void } = {
         setFullName("");
         setEmail("");
         setPhone("");
-        setCountry("");
+            setCountry("");
+        setRole("tourist");
         setPassword("");
         setConfirm("");
     }
@@ -202,6 +205,20 @@ export default function RegisterForm({ onSwitch }: { onSwitch?: () => void } = {
                             onChange={(e) => setPhone(e.target.value)}
                         />
                     </div>
+                </div>
+
+                <div className="login-field">
+                    <label htmlFor="reg-role">I want to join as</label>
+                    <select
+                        id="reg-role"
+                        name="role"
+                        value={role}
+                        onChange={(e) => setRole(e.target.value as "tourist" | "guide" | "seller")}
+                    >
+                        <option value="tourist">Tourist - plan and book treks</option>
+                        <option value="guide">Local guide - manage departures</option>
+                        <option value="seller">Local seller - manage products</option>
+                    </select>
                 </div>
 
                 <div className="login-field">

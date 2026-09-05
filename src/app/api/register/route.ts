@@ -24,16 +24,18 @@ export async function POST(request: Request) {
         );
     }
 
-    const { name, email, password } = (body ?? {}) as {
+    const { name, email, password, role } = (body ?? {}) as {
         name?: unknown;
         email?: unknown;
         password?: unknown;
+        role?: unknown;
     };
 
     const fullName = typeof name === "string" ? name.trim() : "";
     const cleanEmail =
         typeof email === "string" ? email.trim().toLowerCase() : "";
     const cleanPassword = typeof password === "string" ? password : "";
+    const cleanRole = typeof role === "string" ? role : "tourist";
 
     if (fullName.length < 2) {
         return NextResponse.json(
@@ -50,6 +52,12 @@ export async function POST(request: Request) {
     if (cleanPassword.length < 8) {
         return NextResponse.json(
             { ok: false, error: "Password must be at least 8 characters." },
+            { status: 400 }
+        );
+    }
+    if (!(["tourist", "guide", "seller"] as string[]).includes(cleanRole)) {
+        return NextResponse.json(
+            { ok: false, error: "Choose a valid account role." },
             { status: 400 }
         );
     }
@@ -70,6 +78,7 @@ export async function POST(request: Request) {
             name: fullName,
             email: cleanEmail,
             password: cleanPassword,
+            role: cleanRole as "tourist" | "guide" | "seller",
         });
 
         return NextResponse.json({

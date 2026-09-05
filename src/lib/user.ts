@@ -16,6 +16,7 @@ export interface UserRow {
     password_hash: string | null;
     image: string | null;
     provider: "credentials" | "google";
+    role: "tourist" | "guide" | "seller";
     created_at: Date;
 }
 
@@ -26,6 +27,7 @@ const USER_COLUMNS = `
     password_hash,
     image,
     provider,
+    role,
     created_at
 `;
 
@@ -54,6 +56,7 @@ export interface CreateUserInput {
     password?: string;
     image?: string | null;
     provider?: "credentials" | "google";
+    role?: "tourist" | "guide" | "seller";
 }
 
 export async function createUser(input: CreateUserInput): Promise<UserRow> {
@@ -64,14 +67,15 @@ export async function createUser(input: CreateUserInput): Promise<UserRow> {
     // For SQLite compatibility, we insert and then fetch the row
     // SQLite doesn't support RETURNING with custom ID generation like PostgreSQL does
     await query(
-        `INSERT INTO users (name, email, password_hash, image, provider)
-         VALUES (?, ?, ?, ?, ?);`,
+        `INSERT INTO users (name, email, password_hash, image, provider, role)
+         VALUES (?, ?, ?, ?, ?, ?);`,
         [
             input.name.trim(),
             input.email.trim().toLowerCase(),
             passwordHash,
             input.image ?? null,
             input.provider ?? "credentials",
+            input.role ?? "tourist",
         ]
     );
 

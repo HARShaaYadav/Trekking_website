@@ -39,9 +39,14 @@ export function getDb(): Database.Database {
     if (!db) {
         const dbPath = getDatabasePath();
         db = new Database(dbPath);
-        
         // Enable foreign keys
         db.pragma('foreign_keys = ON');
+
+        // Keep existing local databases compatible with the role-aware hub.
+        const columns = db.prepare("PRAGMA table_info(users)").all() as { name: string }[];
+        if (columns.length > 0 && !columns.some((column) => column.name === "role")) {
+            db.exec("ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'tourist'");
+        }
     }
     return db;
 }

@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash TEXT,
     image         TEXT,
     provider      TEXT NOT NULL DEFAULT 'credentials',
+    role          TEXT NOT NULL DEFAULT 'tourist',
     created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
