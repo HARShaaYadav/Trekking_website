@@ -5799,6 +5799,25 @@ footer .wrap {
         grid-template-columns: 1fr;
     }
 
+    .treks-page .wrap {
+        max-width: var(--wrap);
+        margin: 0 auto;
+        padding: 0 16px;
+    }
+
+    /* Filters should scroll with the page on phones instead of covering trek cards. */
+    .treks-page .grade-filter-box {
+        position: static;
+        margin: 16px 0 24px;
+        padding: 16px;
+    }
+
+    .treks-page .grade-filter-options {
+        flex-wrap: wrap;
+        overflow: visible;
+        padding-bottom: 0;
+    }
+
     .treks-page .treks-sidebar {
         position: fixed;
         top: auto;
@@ -5842,10 +5861,9 @@ footer .wrap {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        position: fixed;
-        left: 16px;
-        bottom: 16px;
-        z-index: 50;
+        position: static;
+        justify-self: start;
+        margin: 16px 0 0;
         background: var(--flare);
         color: #fff;
         border: none;
@@ -5869,6 +5887,60 @@ footer .wrap {
 
     .treks-page .trek-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    :root {
+        --header-h: 72px;
+    }
+
+    header,
+    header.solid,
+    header.on-light {
+        padding: 7px 0;
+    }
+
+    nav.wrap {
+        min-height: 58px;
+        flex-wrap: nowrap;
+        gap: 10px;
+        padding: 0 16px;
+    }
+
+    .logo {
+        gap: 7px;
+        min-width: 0;
+    }
+
+    .logo .mark {
+        font-size: 29px;
+    }
+
+    .logo .sub {
+        font-size: 10px;
+        letter-spacing: 1px;
+    }
+
+    /* Search remains available from the Trek selector and treks page on small screens. */
+    .searchbar {
+        display: none;
+    }
+
+    .weather-header-badge {
+        margin-left: auto;
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+
+    .burger {
+        padding: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo .sub {
+        display: none;
     }
 }
 
