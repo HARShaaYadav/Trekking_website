@@ -1,33 +1,50 @@
 import { NextResponse } from "next/server";
-import { getDb } from "@/lib/db";
+import { query } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
+
+interface ReviewRow {
+    id: string;
+    trek_slug: string;
+    user_name: string;
+    rating: number;
+    title: string;
+    comment: string;
+    visited_month: string | null;
+    helpful_count: number;
+    verified: number;
+    created_at: string;
+}
 
 export async function GET(req: Request) {
     try {
         const { searchParams } = new URL(req.url);
         const slug = searchParams.get("slug");
 
-        const db = getDb();
-        let reviews;
+        let result;
 
         if (slug) {
-            reviews = db.prepare(`
+            result = await query<ReviewRow>(
+                `
                 SELECT id, trek_slug, user_name, rating, title, comment, visited_month, helpful_count, verified, created_at
                 FROM reviews
                 WHERE trek_slug = ?
                 ORDER BY created_at DESC
-            `).all(slug);
+                `,
+                [slug]
+            );
         } else {
-            reviews = db.prepare(`
+            result = await query<ReviewRow>(
+                `
                 SELECT id, trek_slug, user_name, rating, title, comment, visited_month, helpful_count, verified, created_at
                 FROM reviews
                 ORDER BY created_at DESC
                 LIMIT 30
-            `).all();
+                `
+            );
         }
 
-        return NextResponse.json({ reviews });
+        return NextResponse.json({ reviews: result.rows });
     } catch (error) {
         console.error("Failed to fetch reviews:", error);
         return NextResponse.json({ error: "Failed to fetch reviews" }, { status: 500 });
@@ -48,20 +65,20 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Rating must be between 1 and 5" }, { status: 400 });
         }
 
-        const db = getDb();
-        const stmt = db.prepare(`
+        await query(
+            `
             INSERT INTO reviews (trek_slug, user_name, user_email, rating, title, comment, visited_month, helpful_count, verified)
             VALUES (?, ?, ?, ?, ?, ?, ?, 0, 1)
-        `);
-
-        stmt.run(
-            trek_slug,
-            user_name.trim(),
-            user_email ? user_email.trim() : null,
-            numericRating,
-            title.trim(),
-            comment.trim(),
-            visited_month ? visited_month.trim() : "Recent"
+            `,
+            [
+                trek_slug,
+                user_name.trim(),
+                user_email ? user_email.trim() : null,
+                numericRating,
+                title.trim(),
+                comment.trim(),
+                visited_month ? visited_month.trim() : "Recent"
+            ]
         );
 
         return NextResponse.json({ success: true, message: "Review submitted successfully" });
@@ -70,3 +87,4 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Failed to submit review" }, { status: 500 });
     }
 }
+

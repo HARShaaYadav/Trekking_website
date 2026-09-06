@@ -65,11 +65,14 @@ export default function TrekSubNav({ links }: TrekSubNavProps) {
                             e.preventDefault();
                             const el = document.getElementById(link.id);
                             if (el) {
-                                const top = el.getBoundingClientRect().top + window.scrollY;
+                                const rect = el.getBoundingClientRect();
                                 const offset = 78 + 50 + 8; // header + subnav + gap
-                                window.scrollTo({ top: top - offset, behavior: "smooth" });
+                                const top = rect.top + window.scrollY - offset;
+                                window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+                                history.replaceState(null, "", `#${link.id}`);
                             }
                         }}
+
                     >
                         {link.label}
                     </a>

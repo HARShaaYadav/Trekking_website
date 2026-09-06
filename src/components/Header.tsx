@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -12,6 +11,7 @@ import { treks } from "@/data/treks";
 const NAV_LINKS = [
     { href: "/", label: "Home" },
     { href: "/treks", label: "Treks" },
+    { href: "/weather", label: "Weather" },
     { href: "/book", label: "Packages" },
     { href: "/store", label: "Store" },
     { href: "/hub", label: "Trail Hub" },
@@ -19,7 +19,6 @@ const NAV_LINKS = [
 
 const MORE_LINKS = [
     { href: "/map", label: "Trail Map" },
-    { href: "/weather", label: "Weather" },
     { href: "/community", label: "Community" },
     { href: "/chatbot", label: "AI Assistant" },
     { href: "/about", label: "About" },
@@ -36,6 +35,7 @@ export default function Header() {
     const [open, setOpen] = useState(false);
     const [dropOpen, setDropOpen] = useState(false);
     const [moreOpen, setMoreOpen] = useState(false);
+
     const dropRef = useRef<HTMLDivElement>(null);
     const moreRef = useRef<HTMLDivElement>(null);
     const lastScrollY = useRef(0);

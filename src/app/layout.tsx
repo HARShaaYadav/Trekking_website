@@ -68,6 +68,12 @@ export const metadata: Metadata = {
     },
     category: "travel",
     manifest: "/manifest.webmanifest",
+    icons: {
+        icon: [
+            { url: "/icon.svg", type: "image/svg+xml" },
+        ],
+        apple: "/icon.svg",
+    },
     verification: {
         google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
     },

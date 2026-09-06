@@ -232,6 +232,7 @@ const DEFAULT_CANCELLATION = [
 const SUBNAV_LINKS = [
     { id: "overview", label: "Overview" },
     { id: "highlights", label: "Highlights" },
+    { id: "weather", label: "Weather" },
     { id: "gallery", label: "Gallery" },
     { id: "itinerary", label: "Itinerary" },
     { id: "route", label: "Route" },
@@ -240,6 +241,7 @@ const SUBNAV_LINKS = [
     { id: "reviews", label: "Reviews" },
     { id: "faq", label: "FAQ" },
 ];
+
 
 function Stars() {
     return (
