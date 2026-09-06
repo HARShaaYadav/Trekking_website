@@ -59,11 +59,14 @@ function getBotReply(raw: string): { reply: string; cards?: Trek[] } {
         return { reply: "You're very welcome! Let me know if you need help with gear, permits, or departure dates. 😊" };
     }
 
-    // Specific trek facts must win over broad weather, permit, or price answers.
-    const specificTrek = treks.find((t) =>
-        text.includes(t.slug.split("-")[0]) ||
-        text.includes(t.name.toLowerCase().split(" ")[0])
-    );
+    // Specific trek facts: match specific distinguishing words, never generic stop words like 'the'.
+    const specificTrek = treks.find((t) => {
+        const slugWord = t.slug.split("-")[0];
+        const cleanName = t.name.toLowerCase().replace(/^the\s+/, "");
+        const nameWord = cleanName.split(" ")[0];
+        const regex = new RegExp(`\\b(${slugWord}|${nameWord})\\b`, "i");
+        return regex.test(text);
+    });
     if (specificTrek) {
         return {
             reply: `${specificTrek.name} is a ${specificTrek.days}-day ${specificTrek.grade.toLowerCase()} trek in ${specificTrek.regionLabel}. It reaches ${specificTrek.altitude}, starts from ${specificTrek.startPoint}, costs ${specificTrek.price} per person, and is best during ${specificTrek.bestMonths}.`,
@@ -78,8 +81,21 @@ function getBotReply(raw: string): { reply: string; cards?: Trek[] } {
         };
     }
 
+    // Packing / Gear / Things to carry
+    if (text.includes("pack") || text.includes("carry") || text.includes("gear") || text.includes("cloth") || text.includes("shoe") || text.includes("equipment")) {
+        return {
+            reply: "Essential packing list for trekking in Arunachal Pradesh:\n• Sturdy waterproof trekking boots & woollen socks\n• Layered clothing: thermal base layer, fleece jacket, and windproof/waterproof hard shell\n• Rain poncho or waterproof cover for your backpack\n• 40–50L backpack with rain cover\n• Headlamp with extra batteries, UV sunglasses & SPF 50 sunscreen\n• Personal medical kit (ORS, altitude sickness meds, blister tape) and reusable water bottle with purification tablets.",
+        };
+    }
+
     // Weather
     if (text.includes("weather") || text.includes("temperature") || text.includes("climate") || text.includes("rain") || text.includes("snow")) {
+        if (text.includes("ziro")) {
+            return {
+                reply: "Ziro Valley enjoys a pleasant, temperate climate. Daytime temperatures range between 15°C–22°C, while nights can drop to 5°C–10°C in autumn/spring (and near freezing in peak winter). The best trekking window is October to April with clear skies!",
+                cards: treks.filter((t) => t.slug === "talle-valley-trek"),
+            };
+        }
         return {
             reply: "Autumn (Sep–Nov) offers crystal-clear Himalayan views and dry trails. Spring (Apr–Jun) brings blooming rhododendrons. High passes like Tse La and Gorichen Base Camp drop below 0°C at night, while lower valleys like Ziro remain mild (15°C–20°C).",
         };
@@ -229,12 +245,7 @@ export default function ChatBot() {
         let reply = "";
         let cards: Trek[] | undefined;
 
-        // Catalogue questions use the local source of truth, so trek facts never drift.
-        if (isCatalogueQuestion(trimmed)) {
-            const botResult = getBotReply(trimmed);
-            reply = botResult.reply;
-            cards = botResult.cards;
-        } else try {
+        try {
             const res = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

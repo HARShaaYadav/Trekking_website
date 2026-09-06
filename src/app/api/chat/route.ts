@@ -65,7 +65,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Message is required." }, { status: 400 });
     }
 
-    const model = process.env.OPENROUTER_MODEL || "anthropic/claude-3.5-sonnet";
+    const model = process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini";
     const payload = {
         model,
         messages: [

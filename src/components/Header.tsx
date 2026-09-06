@@ -11,13 +11,13 @@ import { treks } from "@/data/treks";
 const NAV_LINKS = [
     { href: "/", label: "Home" },
     { href: "/treks", label: "Treks" },
-    { href: "/weather", label: "Weather" },
     { href: "/book", label: "Packages" },
     { href: "/store", label: "Store" },
     { href: "/hub", label: "Trail Hub" },
 ];
 
 const MORE_LINKS = [
+    { href: "/weather", label: "Live Weather" },
     { href: "/map", label: "Trail Map" },
     { href: "/community", label: "Community" },
     { href: "/chatbot", label: "AI Assistant" },

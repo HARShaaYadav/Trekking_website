@@ -64,11 +64,10 @@ export async function createUser(input: CreateUserInput): Promise<UserRow> {
         ? await hash(input.password, 12)
         : null;
 
-    // For SQLite compatibility, we insert and then fetch the row
-    // SQLite doesn't support RETURNING with custom ID generation like PostgreSQL does
-    await query(
+    const res = await query<UserRow>(
         `INSERT INTO users (name, email, password_hash, image, provider, role)
-         VALUES (?, ?, ?, ?, ?, ?);`,
+         VALUES ($1, $2, $3, $4, $5, $6)
+         RETURNING ${USER_COLUMNS};`,
         [
             input.name.trim(),
             input.email.trim().toLowerCase(),
@@ -79,16 +78,10 @@ export async function createUser(input: CreateUserInput): Promise<UserRow> {
         ]
     );
 
-    // Now fetch the user we just created
-    const res = await query<UserRow>(
-        `SELECT ${USER_COLUMNS} FROM users WHERE lower(email) = lower(?) LIMIT 1;`,
-        [input.email.trim().toLowerCase()]
-    );
-    
     if (!res.rows[0]) {
-        throw new Error('Failed to create user - could not retrieve inserted row');
+        throw new Error("Failed to create user - could not retrieve inserted row");
     }
-    
+
     return res.rows[0];
 }
 

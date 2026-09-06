@@ -85,10 +85,11 @@ export async function POST(request: Request) {
             ok: true,
             user: { id: user.id, name: user.name, email: user.email },
         });
-    } catch (err) {
+    } catch (err: unknown) {
         console.error("[api/register] failed to create user:", err);
+        const message = err instanceof Error ? err.message : "Could not create your account right now. Please try again.";
         return NextResponse.json(
-            { ok: false, error: "Could not create your account right now. Please try again." },
+            { ok: false, error: message },
             { status: 500 }
         );
     }

@@ -88,12 +88,21 @@ function getBotReply(raw: string): string {
         return `You can reach our team via the contact page — a real trek expert replies within 24 hours. Meanwhile I'm happy to answer quick questions here!`;
     }
 
-    const specificTrek = treks.find((t) =>
-        text.includes(t.slug.split("-")[0]) ||
-        text.includes(t.name.toLowerCase().split(" ")[0])
-    );
+    // Specific trek facts: match specific distinguishing words, never generic stop words like 'the'.
+    const specificTrek = treks.find((t) => {
+        const slugWord = t.slug.split("-")[0];
+        const cleanName = t.name.toLowerCase().replace(/^the\s+/, "");
+        const nameWord = cleanName.split(" ")[0];
+        const regex = new RegExp(`\\b(${slugWord}|${nameWord})\\b`, "i");
+        return regex.test(text);
+    });
     if (specificTrek) {
         return `${specificTrek.name} is a ${specificTrek.days}-day ${specificTrek.grade.toLowerCase()} trek in ${specificTrek.regionLabel}. It reaches ${specificTrek.altitude}, starts from ${specificTrek.startPoint}, costs ${specificTrek.price} per person, and is best during ${specificTrek.bestMonths}.`;
+    }
+
+    // Packing / Gear / Things to carry
+    if (text.includes("pack") || text.includes("carry") || text.includes("gear") || text.includes("cloth") || text.includes("shoe") || text.includes("equipment")) {
+        return `Essential packing list for trekking in Arunachal Pradesh:\n• Sturdy waterproof trekking boots & woollen socks\n• Layered clothing: thermal base layer, fleece jacket, and windproof/waterproof jacket\n• Rain poncho or waterproof cover for your backpack\n• 40–50L backpack with rain cover\n• Headlamp with extra batteries, UV sunglasses & SPF 50 sunscreen\n• Personal medical kit (ORS, altitude sickness tablets, blister tape) and reusable water bottle with purification tablets.`;
     }
 
     // Price / cost / budget
@@ -145,6 +154,9 @@ function getBotReply(raw: string): string {
 
     // Season / best time / weather
     if (text.includes("season") || text.includes("best time") || text.includes("when") || text.includes("month") || text.includes("weather") || text.includes("snow")) {
+        if (text.includes("ziro")) {
+            return `Ziro Valley enjoys a temperate and pleasant climate. Daytime temperatures are generally 15°C–22°C, while nights can drop to 5°C–10°C (and colder in mid-winter). The best trekking window is October to April with clear skies and comfortable trails!`;
+        }
         return `The main trekking seasons in Arunachal Pradesh are autumn (September–November) with clear views and comfortable temperatures, and spring (April–June) with blooming rhododendrons. Some routes like Dong Valley are best in winter (November–April) for clear sunrise views. Each trek's page lists its specific best months.`;
     }
 
@@ -355,9 +367,7 @@ export default function ChatBotPage() {
         setTyping(true);
 
         let reply: string;
-        if (isCatalogueQuestion(trimmed)) {
-            reply = getBotReply(trimmed);
-        } else try {
+        try {
             const res = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -376,7 +386,6 @@ export default function ChatBotPage() {
             timestamp: new Date() 
         };
         setMessages((prev) => [...prev, botMessage]);
-        
     }
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
