@@ -14,6 +14,17 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  * Errors:  400 (bad input), 409 (email already registered), 500 (db)
  */
 export async function POST(request: Request) {
+    const databaseUrl = process.env.DATABASE_URL ?? "file:./dev.db";
+    if (process.env.VERCEL && databaseUrl.startsWith("file:")) {
+        return NextResponse.json(
+            {
+                ok: false,
+                error: "Account creation is not available on this deployment yet. Connect a hosted database before enabling sign-up.",
+            },
+            { status: 503 }
+        );
+    }
+
     let body: unknown;
     try {
         body = await request.json();

@@ -59,6 +59,18 @@ function getBotReply(raw: string): { reply: string; cards?: Trek[] } {
         return { reply: "You're very welcome! Let me know if you need help with gear, permits, or departure dates. 😊" };
     }
 
+    // Specific trek facts must win over broad weather, permit, or price answers.
+    const specificTrek = treks.find((t) =>
+        text.includes(t.slug.split("-")[0]) ||
+        text.includes(t.name.toLowerCase().split(" ")[0])
+    );
+    if (specificTrek) {
+        return {
+            reply: `${specificTrek.name} is a ${specificTrek.days}-day ${specificTrek.grade.toLowerCase()} trek in ${specificTrek.regionLabel}. It reaches ${specificTrek.altitude}, starts from ${specificTrek.startPoint}, costs ${specificTrek.price} per person, and is best during ${specificTrek.bestMonths}.`,
+            cards: [specificTrek],
+        };
+    }
+
     // Permits
     if (text.includes("permit") || text.includes("ilp") || text.includes("pap")) {
         return {
@@ -112,20 +124,15 @@ function getBotReply(raw: string): { reply: string; cards?: Trek[] } {
         }
     }
 
-    // Trek specific matches by name
-    const specificTrek = treks.find(t => text.includes(t.slug.split("-")[0]) || text.includes(t.name.toLowerCase().split(" ")[0]));
-    if (specificTrek) {
-        return {
-            reply: `${specificTrek.name} is a ${specificTrek.days}-day trek reaching ${specificTrek.altitude} with grade: ${specificTrek.grade}. Best season is ${specificTrek.bestMonths}.`,
-            cards: [specificTrek],
-        };
-    }
-
     // Default
     return {
         reply: "I can help you explore Arunachal's signature routes, check current permits, compare costs, or find a trek for your fitness level. Try asking one of the options below!",
         cards: [treks[0]],
     };
+}
+
+function isCatalogueQuestion(text: string): boolean {
+    return /trek|route|tawang|ziro|anini|dong|talle|sangestar|gorichen|bailey|lake|permit|ilp|pap|price|cost|budget|beginner|easy|difficult|challenging|weather|season|month|pack|altitude|duration|days|recommend|suggest|best/.test(text.toLowerCase());
 }
 
 const QUICK_REPLIES = [
@@ -146,6 +153,7 @@ export default function ChatBot() {
     const [isListening, setIsListening] = useState(false);
     const [speakingIdx, setSpeakingIdx] = useState<number | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const recognitionRef = useRef<SpeechRecognition | null>(null);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -174,6 +182,10 @@ export default function ChatBot() {
 
     const handleVoiceInput = () => {
         if (typeof window === "undefined") return;
+        if (isListening) {
+            recognitionRef.current?.stop();
+            return;
+        }
         const SpeechRecognition = (window as unknown as { SpeechRecognition?: new () => any; webkitSpeechRecognition?: new () => any }).SpeechRecognition ||
             (window as unknown as { webkitSpeechRecognition?: new () => any }).webkitSpeechRecognition;
 
@@ -183,12 +195,20 @@ export default function ChatBot() {
         }
 
         const recognition = new SpeechRecognition();
+        recognitionRef.current = recognition;
         recognition.lang = "en-IN";
         recognition.interimResults = false;
 
         recognition.onstart = () => setIsListening(true);
         recognition.onend = () => setIsListening(false);
-        recognition.onerror = () => setIsListening(false);
+        recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+            setIsListening(false);
+            if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+                alert("Microphone access is blocked. Allow it in your browser settings, then try again.");
+            } else if (event.error === "no-speech") {
+                alert("I could not hear anything. Try again and speak after the microphone appears active.");
+            }
+        };
         recognition.onresult = (event: any) => {
             const transcript = event.results?.[0]?.[0]?.transcript;
             if (transcript) {
@@ -209,7 +229,12 @@ export default function ChatBot() {
         let reply = "";
         let cards: Trek[] | undefined;
 
-        try {
+        // Catalogue questions use the local source of truth, so trek facts never drift.
+        if (isCatalogueQuestion(trimmed)) {
+            const botResult = getBotReply(trimmed);
+            reply = botResult.reply;
+            cards = botResult.cards;
+        } else try {
             const res = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -401,13 +426,13 @@ export default function ChatBot() {
                         <button
                             type="button"
                             className="voice-btn"
-                            title={isListening ? "Listening..." : "Click to speak"}
+                            title={isListening ? "Stop listening" : "Click to speak"}
                             onClick={handleVoiceInput}
                             style={{
                                 background: isListening ? "rgba(239, 68, 68, 0.2)" : undefined,
                                 color: isListening ? "#ef4444" : undefined
                             }}
-                            aria-label="Voice input"
+                            aria-label={isListening ? "Stop listening" : "Voice input"}
                         >
                             🎙️
                         </button>

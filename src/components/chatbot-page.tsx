@@ -88,6 +88,14 @@ function getBotReply(raw: string): string {
         return `You can reach our team via the contact page — a real trek expert replies within 24 hours. Meanwhile I'm happy to answer quick questions here!`;
     }
 
+    const specificTrek = treks.find((t) =>
+        text.includes(t.slug.split("-")[0]) ||
+        text.includes(t.name.toLowerCase().split(" ")[0])
+    );
+    if (specificTrek) {
+        return `${specificTrek.name} is a ${specificTrek.days}-day ${specificTrek.grade.toLowerCase()} trek in ${specificTrek.regionLabel}. It reaches ${specificTrek.altitude}, starts from ${specificTrek.startPoint}, costs ${specificTrek.price} per person, and is best during ${specificTrek.bestMonths}.`;
+    }
+
     // Price / cost / budget
     if (text.includes("price") || text.includes("cost") || text.includes("budget") || text.includes("cheap") || text.includes("expensive")) {
         const byPrice = [...treks].sort(
@@ -155,6 +163,10 @@ function getBotReply(raw: string): string {
     return `I can help with trek recommendations, regions, difficulty, duration, seasons and prices. Try asking things like:\n• "Recommend a trek"\n• "Best for beginners"\n• "Tawang treks"\n• "Bailey Trail details"\n• "How much does it cost?"`;
 }
 
+function isCatalogueQuestion(text: string): boolean {
+    return /trek|route|tawang|ziro|anini|dong|talle|sangestar|gorichen|bailey|lake|permit|ilp|pap|price|cost|budget|beginner|easy|difficult|challenging|weather|season|month|pack|altitude|duration|days|recommend|suggest|best/.test(text.toLowerCase());
+}
+
 const QUICK_REPLIES = [
     "Recommend a trek",
     "Best for beginners", 
@@ -181,6 +193,7 @@ export default function ChatBotPage() {
     const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
     const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
     const [synthesis, setSynthesis] = useState<SpeechSynthesis | null>(null);
+    const [speakingMessage, setSpeakingMessage] = useState<number | null>(null);
     
     const scrollRef = useRef<HTMLDivElement>(null);
     const currentUtterance = useRef<SpeechSynthesisUtterance | null>(null);
@@ -219,7 +232,7 @@ export default function ChatBotPage() {
                 
                 recognition.continuous = false;
                 recognition.interimResults = false;
-                recognition.lang = "en-US";
+                recognition.lang = "en-IN";
                 
                 recognition.onstart = () => {
                     setVoiceConfig(prev => ({ ...prev, isListening: true, isRecording: true }));
@@ -234,6 +247,11 @@ export default function ChatBotPage() {
                 recognition.onerror = (event: any) => {
                     console.error("Speech recognition error:", event.error);
                     setVoiceConfig(prev => ({ ...prev, isListening: false, isRecording: false }));
+                    if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+                        alert("Microphone access is blocked. Allow it in your browser settings, then try again.");
+                    } else if (event.error === "no-speech") {
+                        alert("I could not hear anything. Try again and speak after the microphone turns red.");
+                    }
                 };
                 
                 recognition.onend = () => {
@@ -265,6 +283,7 @@ export default function ChatBotPage() {
             if (voiceConfig.isSpeaking && synthesis) {
                 synthesis.cancel();
                 setVoiceConfig(prev => ({ ...prev, isSpeaking: false }));
+                setSpeakingMessage(null);
             }
             recognition.start();
         }
@@ -276,8 +295,12 @@ export default function ChatBotPage() {
         }
     };
 
-    const speakText = (text: string) => {
-        if (synthesis && availableVoices.length > 0) {
+    const speakText = (text: string, messageIndex: number) => {
+        if (synthesis) {
+            if (speakingMessage === messageIndex) {
+                stopSpeaking();
+                return;
+            }
             // Cancel any ongoing speech
             synthesis.cancel();
             
@@ -288,17 +311,20 @@ export default function ChatBotPage() {
             
             utterance.onstart = () => {
                 setVoiceConfig(prev => ({ ...prev, isSpeaking: true }));
+                setSpeakingMessage(messageIndex);
                 currentUtterance.current = utterance;
             };
             
             utterance.onend = () => {
                 setVoiceConfig(prev => ({ ...prev, isSpeaking: false }));
+                setSpeakingMessage(null);
                 currentUtterance.current = null;
             };
             
             utterance.onerror = (event) => {
                 console.error("Speech synthesis error:", event.error);
                 setVoiceConfig(prev => ({ ...prev, isSpeaking: false }));
+                setSpeakingMessage(null);
                 currentUtterance.current = null;
             };
             
@@ -310,6 +336,7 @@ export default function ChatBotPage() {
         if (synthesis && voiceConfig.isSpeaking) {
             synthesis.cancel();
             setVoiceConfig(prev => ({ ...prev, isSpeaking: false }));
+            setSpeakingMessage(null);
             currentUtterance.current = null;
         }
     };
@@ -328,7 +355,9 @@ export default function ChatBotPage() {
         setTyping(true);
 
         let reply: string;
-        try {
+        if (isCatalogueQuestion(trimmed)) {
+            reply = getBotReply(trimmed);
+        } else try {
             const res = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -348,10 +377,6 @@ export default function ChatBotPage() {
         };
         setMessages((prev) => [...prev, botMessage]);
         
-        // Auto-speak bot reply if synthesis is available
-        if (synthesis && availableVoices.length > 0) {
-            setTimeout(() => speakText(reply), 500);
-        }
     }
 
     function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -532,8 +557,7 @@ export default function ChatBotPage() {
                             </div>
                             {m.from === "bot" && synthesis && (
                                 <button
-                                    onClick={() => speakText(m.text)}
-                                    disabled={voiceConfig.isSpeaking}
+                                    onClick={() => speakText(m.text, i)}
                                     style={{
                                         fontSize: '10px',
                                         background: 'var(--mist)',
@@ -541,11 +565,10 @@ export default function ChatBotPage() {
                                         padding: '4px 8px',
                                         borderRadius: 'var(--r-sm)',
                                         marginTop: '8px',
-                                        cursor: voiceConfig.isSpeaking ? 'not-allowed' : 'pointer',
-                                        opacity: voiceConfig.isSpeaking ? 0.5 : 1
+                                        cursor: 'pointer'
                                     }}
                                 >
-                                    🔊 Listen
+                                    {speakingMessage === i ? "Stop" : "Listen"}
                                 </button>
                             )}
                         </div>
